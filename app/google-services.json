@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "886203427961",
+    "project_id": "basketmesaapp",
+    "storage_bucket": "basketmesaapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886203427961:android:c6678f14320d4fb953f8a8",
+        "android_client_info": {
+          "package_name": "com.example.basketmesaapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "886203427961-cbfmb26oljijnhj5o2uke2bhii2l4tta.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.basketmesaapp",
+            "certificate_hash": "e553fb5f5b413fa2172273b79ee9a18265a3dc2a"
+          }
+        },
+        {
+          "client_id": "886203427961-elgvfk9dvjge8g33e4bqoe8rub8a5c1t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5bpLUA-WqDK-O85qayK4VSOsXxLeGfAU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "886203427961-elgvfk9dvjge8g33e4bqoe8rub8a5c1t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
