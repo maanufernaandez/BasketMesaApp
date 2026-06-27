@@ -151,8 +151,24 @@ fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
                     sanciones = sanciones,
                     onEdit = { partido, campo -> partidoEnEdicion = partido; campoAEditar = campo; showAddDialog = true },
                     onEditSancion = { sancion -> sancionEnEdicion = sancion; showSancionDialog = true },
-                    onDeletePartido = { id -> scope.launch { repository.eliminarPartido(id) } },
-                    onDeleteSancion = { id -> scope.launch { repository.eliminarSancion(id) } }
+                    onDeletePartido = { id ->
+                        scope.launch {
+                            try {
+                                repository.eliminarPartido(id)
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Error al eliminar el partido", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    },
+                    onDeleteSancion = { id ->
+                        scope.launch {
+                            try {
+                                repository.eliminarSancion(id)
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Error al eliminar la sanción", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
                 )
 
                 if (showStats) {

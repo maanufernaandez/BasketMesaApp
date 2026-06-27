@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.basketmesaapp.model.Partido
 import com.example.basketmesaapp.model.Sancion
+import com.example.basketmesaapp.utils.normalizeCategory
 
 @Composable
 fun EstadisticasScreen(
@@ -115,11 +116,7 @@ fun StatMenuSection(
     )
 
     val total3Funciones = datos.count { partido ->
-        val normalizedId = partido.categoriaId.lowercase()
-            .replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-            .replace("masculino", "masculin").replace("masculina", "masculin")
-            .replace("femenino", "femenin").replace("femenina", "femenin")
-            .replace(" ", "").replace("/", "").replace("-", "")
+        val normalizedId = partido.categoriaId.normalizeCategory()
 
         val isFlexible = catsFlexible.any { normalizedId.contains(it) || it.contains(normalizedId) }
 

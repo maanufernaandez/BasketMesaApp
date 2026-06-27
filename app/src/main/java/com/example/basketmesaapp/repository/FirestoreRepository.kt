@@ -1,5 +1,6 @@
 package com.example.basketmesaapp.repository
 
+import android.util.Log
 import com.example.basketmesaapp.model.Partido
 import com.example.basketmesaapp.model.Sancion
 import com.google.firebase.auth.FirebaseAuth
@@ -47,7 +48,10 @@ class FirestoreRepository {
     suspend fun eliminarPartido(partidoId: String) {
         try {
             partidosCollection.document(partidoId).delete().await()
-        } catch (e: Exception) {}
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error eliminando partido $partidoId", e)
+            throw e
+        }
     }
 
     fun getSanciones(): Flow<List<Sancion>> {
@@ -80,6 +84,9 @@ class FirestoreRepository {
     suspend fun eliminarSancion(sancionId: String) {
         try {
             sancionesCollection.document(sancionId).delete().await()
-        } catch (e: Exception) {}
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error eliminando sanción $sancionId", e)
+            throw e
+        }
     }
 }

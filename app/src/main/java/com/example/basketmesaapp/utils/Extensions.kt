@@ -40,3 +40,9 @@ fun Modifier.fadingEdge(state: LazyListState): Modifier {
         }
     }
 }
+
+fun String.normalizeCategory(): String = this.lowercase()
+    .replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+    .replace("masculino", "masculin").replace("masculina", "masculin")
+    .replace("femenino", "femenin").replace("femenina", "femenin")
+    .replace(" ", "").replace("/", "").replace("-", "")

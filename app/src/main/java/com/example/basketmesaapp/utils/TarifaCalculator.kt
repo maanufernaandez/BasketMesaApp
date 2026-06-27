@@ -7,14 +7,7 @@ object TarifaCalculator {
 
     fun calcularTotal(partido: Partido, categorias: List<CategoriaConfig>): Double {
         val tarifaBase: Double
-
-        fun normalize(s: String) = s.lowercase()
-            .replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-            .replace("masculino", "masculin").replace("masculina", "masculin")
-            .replace("femenino", "femenin").replace("femenina", "femenin")
-            .replace(" ", "").replace("/", "").replace("-", "")
-
-        val normalizedPartidoCat = normalize(partido.categoriaId)
+        val normalizedPartidoCat = partido.categoriaId.normalizeCategory()
 
         if (partido.rol == "Árbitro") {
             when {
@@ -31,8 +24,10 @@ object TarifaCalculator {
                 normalizedPartidoCat.contains("seleccion") -> tarifaBase = 10.0
                 else -> {
                     val config = categorias.find {
-                        val normalizedConfigId = normalize(it.id)
-                        normalizedConfigId == normalizedPartidoCat || normalizedPartidoCat.contains(normalizedConfigId) || normalizedConfigId.contains(normalizedPartidoCat)
+                        val normalizedConfigId = it.id.normalizeCategory()
+                        normalizedConfigId == normalizedPartidoCat ||
+                                normalizedPartidoCat.contains(normalizedConfigId) ||
+                                normalizedConfigId.contains(normalizedPartidoCat)
                     }
                     tarifaBase = config?.tarifaOficial ?: 0.0
                 }
@@ -79,8 +74,10 @@ object TarifaCalculator {
                 }
                 else -> {
                     val config = categorias.find {
-                        val normalizedConfigId = normalize(it.id)
-                        normalizedConfigId == normalizedPartidoCat || normalizedPartidoCat.contains(normalizedConfigId) || normalizedConfigId.contains(normalizedPartidoCat)
+                        val normalizedConfigId = it.id.normalizeCategory()
+                        normalizedConfigId == normalizedPartidoCat ||
+                                normalizedPartidoCat.contains(normalizedConfigId) ||
+                                normalizedConfigId.contains(normalizedPartidoCat)
                     }
                     tarifaBase = config?.tarifaOficial ?: 0.0
                 }
@@ -101,7 +98,9 @@ object TarifaCalculator {
         }
 
         total += if (partido.tipoDesplazamiento != "Ninguno") {
-            val match = DataConstants.preciosDesplazamiento.entries.find { partido.polideportivo.contains(it.key, ignoreCase = true) }
+            val match = DataConstants.preciosDesplazamiento.entries.find {
+                partido.polideportivo.contains(it.key, ignoreCase = true)
+            }
             if (match != null) {
                 if (partido.tipoDesplazamiento == "Conductor") match.value.first else match.value.second
             } else {

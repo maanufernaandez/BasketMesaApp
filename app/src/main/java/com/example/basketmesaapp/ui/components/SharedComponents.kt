@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.basketmesaapp.utils.DataConstants
 
 @Composable
 fun BaseStepDialog(
@@ -62,7 +63,10 @@ fun BaseStepDialog(
         properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Surface(
-            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.80f).padding(horizontal = 16.dp, vertical = 24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.80f)
+                .padding(horizontal = 16.dp, vertical = 24.dp),
             shape = RoundedCornerShape(20.dp),
             color = MaterialTheme.colorScheme.background
         ) {
@@ -70,7 +74,10 @@ fun BaseStepDialog(
                 Text(title, fontWeight = FontWeight.ExtraBold, fontSize = 22.sp, color = titleColor)
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
                     content()
                 }
 
@@ -85,7 +92,10 @@ fun BaseStepDialog(
                         modifier = Modifier.weight(1f).fillMaxHeight(),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 2.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444), contentColor = Color.White)
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFEF4444),
+                            contentColor = Color.White
+                        )
                     ) {
                         Text(
                             text = "Cancelar",
@@ -102,7 +112,10 @@ fun BaseStepDialog(
                             modifier = Modifier.weight(1f).fillMaxHeight(),
                             shape = RoundedCornerShape(12.dp),
                             contentPadding = PaddingValues(horizontal = 2.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF64748B), contentColor = Color.White)
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF64748B),
+                                contentColor = Color.White
+                            )
                         ) {
                             Text(
                                 text = "Atrás",
@@ -182,12 +195,15 @@ fun CustomTimePicker(initialHour: Int, initialMinute: Int, onTimeSelected: (Stri
         modifier = Modifier.fillMaxSize()
     ) {
         Box(modifier = Modifier.fillMaxWidth().height(300.dp), contentAlignment = Alignment.Center) {
-            Row(
-                modifier = Modifier.fillMaxSize(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+
+                // Horas
                 Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
-                    LazyColumn(state = hourListState, flingBehavior = hourSnap, modifier = Modifier.width(70.dp).fillMaxHeight()) {
+                    LazyColumn(
+                        state = hourListState,
+                        flingBehavior = hourSnap,
+                        modifier = Modifier.width(70.dp).fillMaxHeight()
+                    ) {
                         items(1000) { index ->
                             val hour = hours[index % hours.size]
                             val isSelected = index == selectedHourIndex
@@ -203,9 +219,7 @@ fun CustomTimePicker(initialHour: Int, initialMinute: Int, onTimeSelected: (Stri
                                             val itemCenter = itemInfo.offset + (itemInfo.size / 2f)
                                             val distance = kotlin.math.abs(viewportCenter - itemCenter)
                                             val maxDistance = (layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset) / 2f
-
                                             val fraction = 1f - (distance / maxDistance).coerceIn(0f, 1f)
-
                                             alpha = 0.15f + 0.85f * fraction
                                             val sign = if (itemCenter > viewportCenter) -1f else 1f
                                             rotationX = sign * (distance / maxDistance) * 60f
@@ -229,7 +243,11 @@ fun CustomTimePicker(initialHour: Int, initialMinute: Int, onTimeSelected: (Stri
                     }
                 }
 
-                Box(modifier = Modifier.wrapContentWidth().fillMaxHeight(), contentAlignment = Alignment.Center) {
+                // Separador ":"
+                Box(
+                    modifier = Modifier.wrapContentWidth().fillMaxHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
                         text = ":",
                         fontSize = 34.sp,
@@ -238,8 +256,13 @@ fun CustomTimePicker(initialHour: Int, initialMinute: Int, onTimeSelected: (Stri
                     )
                 }
 
+                // Minutos
                 Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
-                    LazyColumn(state = minuteListState, flingBehavior = minuteSnap, modifier = Modifier.width(70.dp).fillMaxHeight()) {
+                    LazyColumn(
+                        state = minuteListState,
+                        flingBehavior = minuteSnap,
+                        modifier = Modifier.width(70.dp).fillMaxHeight()
+                    ) {
                         items(1000) { index ->
                             val minute = minutes[index % minutes.size]
                             val isSelected = index == selectedMinuteIndex
@@ -255,9 +278,7 @@ fun CustomTimePicker(initialHour: Int, initialMinute: Int, onTimeSelected: (Stri
                                             val itemCenter = itemInfo.offset + (itemInfo.size / 2f)
                                             val distance = kotlin.math.abs(viewportCenter - itemCenter)
                                             val maxDistance = (layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset) / 2f
-
                                             val fraction = 1f - (distance / maxDistance).coerceIn(0f, 1f)
-
                                             alpha = 0.15f + 0.85f * fraction
                                             val sign = if (itemCenter > viewportCenter) -1f else 1f
                                             rotationX = sign * (distance / maxDistance) * 60f
@@ -286,18 +307,32 @@ fun CustomTimePicker(initialHour: Int, initialMinute: Int, onTimeSelected: (Stri
 }
 
 @Composable
-fun CustomDatePicker(initialDate: String, onDateSelected: (String) -> Unit) {
+fun CustomDatePicker(
+    initialDate: String,
+    temporadaInicio: String = DataConstants.temporadaInicio,
+    temporadaFin: String = DataConstants.temporadaFin,
+    festivos: List<String> = DataConstants.festivosTemporada,
+    onDateSelected: (String) -> Unit
+) {
     val localeSpanish = java.util.Locale("es", "ES")
 
-    val startLimit = remember {
+    val startLimit = remember(temporadaInicio) {
         java.util.Calendar.getInstance(localeSpanish).apply {
-            set(2026, java.util.Calendar.SEPTEMBER, 1, 0, 0, 0)
+            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+            time = sdf.parse(temporadaInicio) ?: time
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
             set(java.util.Calendar.MILLISECOND, 0)
         }
     }
-    val endLimit = remember {
+    val endLimit = remember(temporadaFin) {
         java.util.Calendar.getInstance(localeSpanish).apply {
-            set(2027, java.util.Calendar.MAY, 31, 23, 59, 59)
+            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+            time = sdf.parse(temporadaFin) ?: time
+            set(java.util.Calendar.HOUR_OF_DAY, 23)
+            set(java.util.Calendar.MINUTE, 59)
+            set(java.util.Calendar.SECOND, 59)
             set(java.util.Calendar.MILLISECOND, 999)
         }
     }
@@ -308,13 +343,21 @@ fun CustomDatePicker(initialDate: String, onDateSelected: (String) -> Unit) {
                 initialDate
             } else {
                 val now = java.util.Calendar.getInstance(localeSpanish)
-                val target = if (now.before(startLimit) || now.after(endLimit)) startLimit.clone() as java.util.Calendar else now.clone() as java.util.Calendar
+                val target = if (now.before(startLimit) || now.after(endLimit))
+                    startLimit.clone() as java.util.Calendar
+                else
+                    now.clone() as java.util.Calendar
 
                 if (target.get(java.util.Calendar.DAY_OF_WEEK) == java.util.Calendar.THURSDAY) {
                     target.add(java.util.Calendar.DAY_OF_MONTH, 1)
                 }
 
-                String.format(java.util.Locale.US, "%04d-%02d-%02d", target.get(java.util.Calendar.YEAR), target.get(java.util.Calendar.MONTH) + 1, target.get(java.util.Calendar.DAY_OF_MONTH))
+                String.format(
+                    java.util.Locale.US, "%04d-%02d-%02d",
+                    target.get(java.util.Calendar.YEAR),
+                    target.get(java.util.Calendar.MONTH) + 1,
+                    target.get(java.util.Calendar.DAY_OF_MONTH)
+                )
             }
         )
     }
@@ -334,7 +377,8 @@ fun CustomDatePicker(initialDate: String, onDateSelected: (String) -> Unit) {
     }
 
     val monthFormat = java.text.SimpleDateFormat("MMMM yyyy", localeSpanish)
-    val monthName = monthFormat.format(currentMonth.time).replaceFirstChar { if (it.isLowerCase()) it.titlecase(localeSpanish) else it.toString() }
+    val monthName = monthFormat.format(currentMonth.time)
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(localeSpanish) else it.toString() }
 
     Column(modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp)) {
         Row(
@@ -370,7 +414,10 @@ fun CustomDatePicker(initialDate: String, onDateSelected: (String) -> Unit) {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(1.dp)) {
                     daysOfWeek.forEach { day ->
                         Box(
-                            modifier = Modifier.weight(1f).aspectRatio(1f).background(MaterialTheme.colorScheme.surfaceVariant),
+                            modifier = Modifier
+                                .weight(1f)
+                                .aspectRatio(1f)
+                                .background(MaterialTheme.colorScheme.surfaceVariant),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(day, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.primary, fontSize = 15.sp)
@@ -398,12 +445,16 @@ fun CustomDatePicker(initialDate: String, onDateSelected: (String) -> Unit) {
                             var thisDateStr = ""
 
                             if (isCurrentMonth) {
-                                thisDateStr = String.format(java.util.Locale.US, "%04d-%02d-%02d", currentYear, currentMonthNum, dayCounter)
+                                thisDateStr = String.format(
+                                    java.util.Locale.US, "%04d-%02d-%02d",
+                                    currentYear, currentMonthNum, dayCounter
+                                )
                                 val cellDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).parse(thisDateStr)
                                 if (cellDate != null) {
                                     val cellCal = java.util.Calendar.getInstance().apply { time = cellDate }
                                     val isJueves = cellCal.get(java.util.Calendar.DAY_OF_WEEK) == java.util.Calendar.THURSDAY
-                                    isSelectable = !cellCal.before(startLimit) && !cellCal.after(endLimit) && !isJueves
+                                    val isFestivo = festivos.contains(thisDateStr)
+                                    isSelectable = !cellCal.before(startLimit) && !cellCal.after(endLimit) && !isJueves && !isFestivo
                                 }
                             }
 

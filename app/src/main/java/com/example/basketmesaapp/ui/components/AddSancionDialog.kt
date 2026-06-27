@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.basketmesaapp.model.Sancion
+import com.example.basketmesaapp.utils.DataConstants
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -29,7 +30,13 @@ fun AddSancionDialog(
 
     var fecha by remember(sancionAEditar) { mutableStateOf(sancionAEditar?.fecha ?: "") }
     var motivo by remember(sancionAEditar) { mutableStateOf(sancionAEditar?.motivo ?: "") }
-    var importeStr by remember(sancionAEditar) { mutableStateOf(if (sancionAEditar != null && sancionAEditar.importe > 0.0) sancionAEditar.importe.toString() else "") }
+    var importeStr by remember(sancionAEditar) {
+        mutableStateOf(
+            if (sancionAEditar != null && sancionAEditar.importe > 0.0)
+                sancionAEditar.importe.toString()
+            else ""
+        )
+    }
 
     when (step) {
         1 -> {
@@ -42,7 +49,10 @@ fun AddSancionDialog(
                 nextEnabled = fechaTemporal.isNotEmpty()
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CustomDatePicker(initialDate = fechaTemporal) { nuevaFecha -> fechaTemporal = nuevaFecha }
+                    CustomDatePicker(
+                        initialDate = fechaTemporal,
+                        festivos = DataConstants.festivosTemporada
+                    ) { nuevaFecha -> fechaTemporal = nuevaFecha }
                 }
             }
         }
@@ -59,14 +69,19 @@ fun AddSancionDialog(
                         importe = importeDouble,
                         userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
                     )
-
-                    val sancionFinal = if (sancionAEditar != null) sancionGenerada.copy(id = sancionAEditar.id) else sancionGenerada
+                    val sancionFinal = if (sancionAEditar != null)
+                        sancionGenerada.copy(id = sancionAEditar.id)
+                    else
+                        sancionGenerada
                     onConfirm(sancionFinal)
                 },
                 nextText = "Guardar",
                 nextEnabled = motivo.isNotBlank() && importeStr.isNotBlank()
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     OutlinedTextField(
                         value = motivo,
                         onValueChange = { motivo = it },
@@ -78,7 +93,9 @@ fun AddSancionDialog(
                         value = importeStr,
                         onValueChange = { importeStr = it },
                         label = { Text("Importe (€)") },
-                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                            keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
+                        ),
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp)
                     )

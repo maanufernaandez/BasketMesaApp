@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.basketmesaapp.model.Partido
 import com.example.basketmesaapp.utils.DataConstants
+import com.example.basketmesaapp.utils.normalizeCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,11 +69,8 @@ fun PartidoCard(partido: Partido, onEdit: (Partido, String?) -> Unit, onDelete: 
         "seniormasculin1ª", "seniorfemenin1ª",
         "juniormasculin1ª", "juniorfemenin1ª"
     )
-    val normalizedId = partido.categoriaId.lowercase()
-        .replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-        .replace("masculino", "masculin").replace("masculina", "masculin")
-        .replace("femenino", "femenin").replace("femenina", "femenin")
-        .replace(" ", "").replace("/", "").replace("-", "")
+
+    val normalizedId = partido.categoriaId.normalizeCategory()
 
     val requiresOfficialSelection = flexible.any { normalizedId.contains(it) || it.contains(normalizedId) }
     val esSeleccion = partido.categoriaId.startsWith("Selección Navarra", ignoreCase = true)

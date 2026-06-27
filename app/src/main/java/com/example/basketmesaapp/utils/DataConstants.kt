@@ -300,6 +300,9 @@ object DataConstants {
         "2027-05-01"
     )
 
+    val temporadaInicio: String = "2026-09-01"
+    val temporadaFin: String = "2027-05-31"
+
     val preciosDesplazamiento = mapOf(
         "Alsasua" to Pair(35.0, 8.0),
         "Estella" to Pair(30.10, 6.88),
