@@ -1,10 +1,6 @@
 package com.example.basketmesaapp.ui.screens
 
 import android.widget.Toast
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -53,18 +49,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.basketmesaapp.ui.components.AddSancionDialog
-import com.example.basketmesaapp.R
 import com.example.basketmesaapp.model.Partido
 import com.example.basketmesaapp.model.Sancion
 import com.example.basketmesaapp.repository.FirestoreRepository
 import com.example.basketmesaapp.ui.components.AddPartidoDialog
+import com.example.basketmesaapp.ui.components.AddSancionDialog
 import com.example.basketmesaapp.ui.components.PartidoCard
 import com.example.basketmesaapp.ui.components.SancionCard
 import com.example.basketmesaapp.utils.DataConstants
@@ -72,38 +65,6 @@ import com.example.basketmesaapp.utils.TarifaCalculator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
-
-@Composable
-fun AnimatedLoadingScreen(onFinished: () -> Unit) {
-    val progress = remember { Animatable(0f) }
-
-    LaunchedEffect(Unit) {
-        progress.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(durationMillis = 2000, easing = LinearEasing)
-        )
-        onFinished()
-    }
-
-    Box(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.icono),
-            contentDescription = "Logo",
-            modifier = Modifier.size(80.dp)
-        )
-
-        CircularProgressIndicator(
-            progress = { progress.value },
-            modifier = Modifier.size(130.dp),
-            color = Color.Red,
-            strokeWidth = 6.dp,
-            strokeCap = StrokeCap.Round
-        )
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

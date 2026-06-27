@@ -4,10 +4,9 @@ import com.example.basketmesaapp.model.CategoriaConfig
 import com.example.basketmesaapp.model.Partido
 
 object TarifaCalculator {
-    val defaultCategorias = DataConstants.listaCategoriasFijas
 
     fun calcularTotal(partido: Partido, categorias: List<CategoriaConfig>): Double {
-        var tarifaBase = 0.0
+        val tarifaBase: Double
 
         fun normalize(s: String) = s.lowercase()
             .replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
@@ -101,15 +100,15 @@ object TarifaCalculator {
             total += dietaMonto
         }
 
-        if (partido.tipoDesplazamiento != "Ninguno") {
+        total += if (partido.tipoDesplazamiento != "Ninguno") {
             val match = DataConstants.preciosDesplazamiento.entries.find { partido.polideportivo.contains(it.key, ignoreCase = true) }
             if (match != null) {
-                total += if (partido.tipoDesplazamiento == "Conductor") match.value.first else match.value.second
+                if (partido.tipoDesplazamiento == "Conductor") match.value.first else match.value.second
             } else {
-                total += partido.plusDesplazamiento
+                partido.plusDesplazamiento
             }
         } else {
-            total += partido.plusDesplazamiento
+            partido.plusDesplazamiento
         }
 
         return total

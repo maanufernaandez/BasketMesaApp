@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.basketmesaapp.repository.FirestoreRepository
-import com.example.basketmesaapp.ui.screens.AnimatedLoadingScreen
 import com.example.basketmesaapp.ui.screens.AuthScreen
 import com.example.basketmesaapp.ui.screens.MainScreen
 import com.google.firebase.auth.FirebaseAuth
@@ -48,33 +47,23 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    var isSplashFinished by remember { mutableStateOf(false) }
                     var currentUser by remember { mutableStateOf(FirebaseAuth.getInstance().currentUser) }
 
-                    if (!isSplashFinished) {
-                        AnimatedLoadingScreen(onFinished = { isSplashFinished = true })
+                    if (currentUser == null) {
+                        AuthScreen(
+                            onAuthSuccess = { currentUser = FirebaseAuth.getInstance().currentUser }
+                        )
                     } else {
-                        if (currentUser == null) {
-                            AuthScreen(
-                                onAuthSuccess = { currentUser = FirebaseAuth.getInstance().currentUser }
-                            )
-                        } else {
-                            MainScreen(
-                                repository = repository,
-                                onLogout = {
-                                    FirebaseAuth.getInstance().signOut()
-                                    currentUser = null
-                                }
-                            )
-                        }
+                        MainScreen(
+                            repository = repository,
+                            onLogout = {
+                                FirebaseAuth.getInstance().signOut()
+                                currentUser = null
+                            }
+                        )
                     }
                 }
             }
         }
     }
 }
-
-
-
-
-

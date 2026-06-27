@@ -29,6 +29,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -63,18 +64,18 @@ fun AddPartidoDialog(
         else -> 1
     }
 
-    var step by remember(partidoAEditar) { mutableStateOf(pasoInicial) }
+    var step by remember(partidoAEditar) { mutableIntStateOf(pasoInicial) }
     var fecha by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.fecha ?: "") }
     var hora by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.hora ?: "16:00") }
     var categoriaId by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.categoriaId ?: "") }
     var polideportivo by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.polideportivo ?: "") }
     var local by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoLocal ?: "") }
     var visitante by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoVisitante ?: "") }
-    var numOficiales by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.numeroOficiales ?: 2) }
+    var numOficiales by remember(partidoAEditar) { mutableIntStateOf(partidoAEditar?.numeroOficiales ?: 2) }
     var cobraDieta by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.cobraDieta ?: false) }
-    var fueraPamplona by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.fueraPamplona ?: false) }
+    val fueraPamplona by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.fueraPamplona ?: false) }
     var tipoDesplazamiento by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.tipoDesplazamiento ?: "Ninguno") }
-    var plusDesplazamiento by remember(partidoAEditar) { mutableStateOf(if (partidoAEditar != null && partidoAEditar.plusDesplazamiento > 0.0) partidoAEditar.plusDesplazamiento.toString() else "") }
+    val plusDesplazamiento by remember(partidoAEditar) { mutableStateOf(if (partidoAEditar != null && partidoAEditar.plusDesplazamiento > 0.0) partidoAEditar.plusDesplazamiento.toString() else "") }
 
     var invertirLocalia by remember(partidoAEditar) { mutableStateOf(false) }
 
@@ -193,14 +194,12 @@ fun AddPartidoDialog(
                     }
                     hora = horaTemporal
                     if (conflicto != null) { step = 99 } else {
-                        if (campoAEditar != null) {
-                            val p = (partidoAEditar ?: Partido()).copy(hora = hora, rol = userRol, autorizado3Vistas = autorizado3Vistas)
-                            onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
-                            onDismiss()
-                        } else step = 3
+                        val p = (partidoAEditar ?: Partido()).copy(hora = hora, rol = userRol, autorizado3Vistas = autorizado3Vistas)
+                        onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
+                        onDismiss()
                     }
                 },
-                nextText = if (campoAEditar != null) "Guardar" else "Siguiente"
+                nextText = "Guardar"
             ) {
                 CustomTimePicker(initialHour = parsedHour, initialMinute = parsedMinute) { timeString -> horaTemporal = timeString }
             }
@@ -477,7 +476,7 @@ fun AddPartidoDialog(
         8 -> {
             val pueblos = mapOf("Alsasua" to "Alsasua", "Estella" to "Estella", "Tudela" to "Tudela", "Puente" to "Puente la reina", "San Adrián" to "San Adrián", "Tafalla" to "Tafalla", "Sangüesa" to "Sangüesa", "Peralta" to "Peralta")
             val esDesplazamiento = pueblos.keys.any { polideportivo.contains(it, ignoreCase = true) }
-            androidx.compose.runtime.LaunchedEffect(Unit) { if (!esDesplazamiento && campoAEditar == null) step = 9 }
+            LaunchedEffect(Unit) { if (!esDesplazamiento && campoAEditar == null) step = 9 }
 
             BaseStepDialog(
                 title = "Extras",
@@ -510,13 +509,18 @@ fun AddPartidoDialog(
             val esDesplazamiento = pueblos.keys.any { polideportivo.contains(it, ignoreCase = true) }
             val seSaltoPaso8 = !esDesplazamiento
 
+            // MODIFICACIÓN: Aquí hacemos que si es obligatorio ir 1 oficial de mesa, se oculte el texto por completo.
             val textoOficiales = if (userRol == "Árbitro") {
                 if (numOficiales == 1) "1 árbitro" else "$numOficiales árbitros"
             } else {
-                if (numOficiales == 1 && requiresOfficialSelection) {
-                    if (autorizado3Vistas) "3 funciones vistas" else "1 oficial"
+                if (numOficiales == 1) {
+                    if (requiresOfficialSelection) {
+                        if (autorizado3Vistas) "3 funciones vistas" else "1 oficial"
+                    } else {
+                        "" // Se oculta en los partidos donde siempre va 1 oficial de mesa
+                    }
                 } else {
-                    if (numOficiales == 1) "1 oficial" else "$numOficiales oficiales"
+                    "$numOficiales oficiales"
                 }
             }
 
@@ -559,11 +563,16 @@ fun AddPartidoDialog(
                             Spacer(Modifier.width(16.dp))
                             Text(categoriaFormateada, fontSize = 16.sp, fontWeight = FontWeight.Medium)
                         }
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(modifier = Modifier.size(28.dp), contentAlignment = Alignment.Center) { Text("👥", fontSize = 20.sp) }
-                            Spacer(Modifier.width(16.dp))
-                            Text(textoOficiales, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+
+                        // MODIFICACIÓN: Si textoOficiales está vacío, ni siquiera dibujamos la fila
+                        if (textoOficiales.isNotEmpty()) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(modifier = Modifier.size(28.dp), contentAlignment = Alignment.Center) { Text("👥", fontSize = 20.sp) }
+                                Spacer(Modifier.width(16.dp))
+                                Text(textoOficiales, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                            }
                         }
+
                         if (tipoDesplazamiento != "Ninguno") {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Box(modifier = Modifier.size(28.dp), contentAlignment = Alignment.Center) { Text("🚗", fontSize = 20.sp) }
