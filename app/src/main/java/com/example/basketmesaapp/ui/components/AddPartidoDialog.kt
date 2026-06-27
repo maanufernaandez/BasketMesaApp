@@ -215,7 +215,6 @@ fun AddPartidoDialog(
                         step = 99
                     } else {
                         if (campoAEditar != null) {
-                            // SI ES EDICIÓN: Guardamos y cerramos
                             val p = (partidoAEditar ?: Partido()).copy(
                                 hora = hora, rol = userRol, autorizado3Vistas = autorizado3Vistas
                             )
