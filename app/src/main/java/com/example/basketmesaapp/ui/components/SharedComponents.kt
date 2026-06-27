@@ -1,5 +1,6 @@
 package com.example.basketmesaapp.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -22,8 +23,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -156,6 +157,7 @@ fun BaseStepDialog(
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun CustomTimePicker(initialHour: Int, initialMinute: Int, onTimeSelected: (String) -> Unit) {
     val hours = (8..22).toList()
@@ -309,8 +311,8 @@ fun CustomTimePicker(initialHour: Int, initialMinute: Int, onTimeSelected: (Stri
 @Composable
 fun CustomDatePicker(
     initialDate: String,
-    temporadaInicio: String = DataConstants.temporadaInicio,
-    temporadaFin: String = DataConstants.temporadaFin,
+    temporadaInicio: String = DataConstants.TEMPORADAINICIO,
+    temporadaFin: String = DataConstants.TEMPORADAFIN,
     festivos: List<String> = DataConstants.festivosTemporada,
     onDateSelected: (String) -> Unit
 ) {
@@ -339,9 +341,7 @@ fun CustomDatePicker(
 
     var selectedDateStr by remember(initialDate) {
         mutableStateOf(
-            if (initialDate.isNotEmpty()) {
-                initialDate
-            } else {
+            initialDate.ifEmpty {
                 val now = java.util.Calendar.getInstance(localeSpanish)
                 val target = if (now.before(startLimit) || now.after(endLimit))
                     startLimit.clone() as java.util.Calendar
@@ -391,7 +391,7 @@ fun CustomDatePicker(
                 prev.add(java.util.Calendar.MONTH, -1)
                 currentMonth = prev
             }) {
-                Icon(Icons.Default.KeyboardArrowLeft, contentDescription = "Anterior", tint = MaterialTheme.colorScheme.primary)
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Anterior", tint = MaterialTheme.colorScheme.primary)
             }
             Text(monthName, fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface)
             IconButton(onClick = {
@@ -399,7 +399,7 @@ fun CustomDatePicker(
                 next.add(java.util.Calendar.MONTH, 1)
                 currentMonth = next
             }) {
-                Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Siguiente", tint = MaterialTheme.colorScheme.primary)
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Siguiente", tint = MaterialTheme.colorScheme.primary)
             }
         }
 

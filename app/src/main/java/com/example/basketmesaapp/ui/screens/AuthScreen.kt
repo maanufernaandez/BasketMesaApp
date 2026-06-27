@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -12,6 +13,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,109 +50,128 @@ fun AuthScreen(onAuthSuccess: () -> Unit) {
     val passwordError = password.isNotEmpty() && !isPasswordValid
     val confirmError = confirmPassword.isNotEmpty() && confirmPassword != password
 
-    Column(modifier = Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+    // Columna principal con centrado ajustado
+    Column(
+        modifier = Modifier.fillMaxSize().padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top // Cambiado a Top para empujar el logo arriba
+    ) {
 
+        Spacer(modifier = Modifier.height(40.dp)) // Espacio superior para que el logo no pegue con el borde
+
+        // Logo circular
         Image(
             painter = painterResource(id = R.drawable.icono),
             contentDescription = "Logo de la app",
-            modifier = Modifier.size(100.dp).padding(bottom = 16.dp)
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(120.dp)
+                .clip(CircleShape)
         )
 
-        when (currentStep) {
-            "LOGIN" -> {
-                Text("Iniciar Sesión", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedTextField(value = email, onValueChange = { email = it.replace(" ", "") }, label = { Text("Email") }, modifier = Modifier.fillMaxWidth())
+        Spacer(modifier = Modifier.height(48.dp)) // Espacio mayor entre logo y texto
 
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it.replace(" ", "") },
-                    label = { Text("Contraseña") },
-                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = { IconButton(onClick = { passwordVisible = !passwordVisible }) { Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff, "Ver") } },
-                    modifier = Modifier.fillMaxWidth()
-                )
+        // Bloque de contenido (LOGIN/REGISTER/FORGOT)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            when (currentStep) {
+                "LOGIN" -> {
+                    Text("Iniciar Sesión", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(value = email, onValueChange = { email = it.replace(" ", "") }, label = { Text("Email") }, modifier = Modifier.fillMaxWidth())
 
-                Button(onClick = {
-                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                        if (it.isSuccessful) onAuthSuccess() else Toast.makeText(context, getFirebaseErrorMessage(it.exception), Toast.LENGTH_SHORT).show()
-                    }
-                }, modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) { Text("Entrar") }
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { password = it.replace(" ", "") },
+                        label = { Text("Contraseña") },
+                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = { IconButton(onClick = { passwordVisible = !passwordVisible }) { Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff, "Ver") } },
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-                TextButton(onClick = { currentStep = "FORGOT" }) { Text("¿Has olvidado tu contraseña?") }
-                TextButton(onClick = { currentStep = "REGISTER" }) { Text("¿No tienes cuenta? Regístrate") }
-            }
+                    Button(onClick = {
+                        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+                            if (it.isSuccessful) onAuthSuccess() else Toast.makeText(context, getFirebaseErrorMessage(it.exception), Toast.LENGTH_SHORT).show()
+                        }
+                    }, modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) { Text("Entrar") }
 
-            "REGISTER" -> {
-                Text("Crear Cuenta", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                OutlinedTextField(value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = apellido, onValueChange = { apellido = it }, label = { Text("Apellidos") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = email, onValueChange = { email = it.replace(" ", "") }, label = { Text("Email") }, modifier = Modifier.fillMaxWidth())
-
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it.replace(" ", "") },
-                    label = { Text("Contraseña") },
-                    isError = passwordError,
-                    supportingText = { if (passwordError) Text("Mínimo 8 caracteres, 1 mayúscula, 1 minúscula y 1 número.") },
-                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = { IconButton(onClick = { passwordVisible = !passwordVisible }) { Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff, "Ver") } },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it.replace(" ", "") },
-                    label = { Text("Repetir Contraseña") },
-                    isError = confirmError,
-                    supportingText = { if (confirmError) Text("Las contraseñas no coinciden.") },
-                    visualTransformation = if (confirmVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = { IconButton(onClick = { confirmVisible = !confirmVisible }) { Icon(if (confirmVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff, "Ver") } },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-                Text("Selecciona tu rol:", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.align(Alignment.Start))
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
-                    RadioButton(selected = rol == "Oficial de Mesa", onClick = { rol = "Oficial de Mesa" })
-                    Text("Oficial de Mesa", modifier = Modifier.clickable { rol = "Oficial de Mesa" })
-                    Spacer(modifier = Modifier.width(16.dp))
-                    RadioButton(selected = rol == "Árbitro", onClick = { rol = "Árbitro" })
-                    Text("Árbitro", modifier = Modifier.clickable { rol = "Árbitro" })
+                    TextButton(onClick = { currentStep = "FORGOT" }) { Text("¿Has olvidado tu contraseña?") }
+                    TextButton(onClick = { currentStep = "REGISTER" }) { Text("¿No tienes cuenta? Regístrate") }
                 }
 
-                if (rol == "Oficial de Mesa") {
-                    Surface(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), shape = RoundedCornerShape(8.dp), modifier = Modifier.fillMaxWidth().clickable { autorizado3Vistas = !autorizado3Vistas }) {
-                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
-                            Checkbox(checked = autorizado3Vistas, onCheckedChange = { autorizado3Vistas = it })
-                            Text("Autorizado 3 Funciones Vistas", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                        }
+                "REGISTER" -> {
+                    Text("Crear Cuenta", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                    OutlinedTextField(value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre") }, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(value = apellido, onValueChange = { apellido = it }, label = { Text("Apellidos") }, modifier = Modifier.fillMaxWidth())
+                    OutlinedTextField(value = email, onValueChange = { email = it.replace(" ", "") }, label = { Text("Email") }, modifier = Modifier.fillMaxWidth())
+
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { password = it.replace(" ", "") },
+                        label = { Text("Contraseña") },
+                        isError = passwordError,
+                        supportingText = { if (passwordError) Text("8+ caracteres, mayús, minús, número", color = Color.Red) },
+                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = { IconButton(onClick = { passwordVisible = !passwordVisible }) { Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff, "Ver") } },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = confirmPassword,
+                        onValueChange = { confirmPassword = it.replace(" ", "") },
+                        label = { Text("Repetir Contraseña") },
+                        isError = confirmError,
+                        supportingText = { if (confirmError) Text("No coinciden", color = Color.Red) },
+                        visualTransformation = if (confirmVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = { IconButton(onClick = { confirmVisible = !confirmVisible }) { Icon(if (confirmVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff, "Ver") } },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text("Selecciona tu rol:", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.align(Alignment.Start))
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
+                        RadioButton(selected = rol == "Oficial de Mesa", onClick = { rol = "Oficial de Mesa" })
+                        Text("Oficial de Mesa", modifier = Modifier.clickable { rol = "Oficial de Mesa" })
+                        Spacer(modifier = Modifier.width(16.dp))
+                        RadioButton(selected = rol == "Árbitro", onClick = { rol = "Árbitro" })
+                        Text("Árbitro", modifier = Modifier.clickable { rol = "Árbitro" })
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+
+                    if (rol == "Oficial de Mesa") {
+                        Surface(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), shape = RoundedCornerShape(8.dp), modifier = Modifier.fillMaxWidth().clickable { autorizado3Vistas = !autorizado3Vistas }) {
+                            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
+                                Checkbox(checked = autorizado3Vistas, onCheckedChange = { autorizado3Vistas = it })
+                                Text("Autorizado 3 Funciones Vistas", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    Button(onClick = {
+                        if (rol.isEmpty()) Toast.makeText(context, "Selecciona un rol", Toast.LENGTH_SHORT).show()
+                        else if (passwordError || confirmError) Toast.makeText(context, "Revisa los errores", Toast.LENGTH_SHORT).show()
+                        else {
+                            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    val userMap = mapOf("nombre" to nombre, "apellido" to apellido, "email" to email, "rol" to rol, "autorizado3Vistas" to (if (rol == "Oficial de Mesa") autorizado3Vistas else false))
+                                    db.collection("usuarios").document(auth.currentUser!!.uid).set(userMap)
+                                    onAuthSuccess()
+                                } else Toast.makeText(context, getFirebaseErrorMessage(task.exception), Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }, modifier = Modifier.fillMaxWidth()) { Text("Completar Registro") }
+
+                    TextButton(onClick = { currentStep = "LOGIN" }) { Text("Volver atrás") }
                 }
 
-                Button(onClick = {
-                    if (rol.isEmpty()) Toast.makeText(context, "Por favor, selecciona tu rol", Toast.LENGTH_SHORT).show()
-                    else if (passwordError || confirmError) Toast.makeText(context, "Revisa los errores en pantalla", Toast.LENGTH_SHORT).show()
-                    else {
-                        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                val userMap = mapOf("nombre" to nombre, "apellido" to apellido, "email" to email, "rol" to rol, "autorizado3Vistas" to (if (rol == "Oficial de Mesa") autorizado3Vistas else false))
-                                db.collection("usuarios").document(auth.currentUser!!.uid).set(userMap)
-                                onAuthSuccess()
-                            } else Toast.makeText(context, getFirebaseErrorMessage(task.exception), Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }, modifier = Modifier.fillMaxWidth()) { Text("Completar Registro") }
-
-                TextButton(onClick = { currentStep = "LOGIN" }) { Text("Volver atrás") }
-            }
-
-            "FORGOT" -> {
-                Text("Recuperar Contraseña", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Introduce tu correo") }, modifier = Modifier.fillMaxWidth())
-                Button(onClick = { auth.sendPasswordResetEmail(email).addOnCompleteListener { if (it.isSuccessful) { Toast.makeText(context, "Enviado", Toast.LENGTH_SHORT).show(); currentStep = "LOGIN" } else Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show() } }, modifier = Modifier.fillMaxWidth().height(50.dp)) { Text("Enviar enlace") }
-                TextButton(onClick = { currentStep = "LOGIN" }) { Text("Volver atrás") }
+                "FORGOT" -> {
+                    Text("Recuperar Contraseña", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Introduce tu correo") }, modifier = Modifier.fillMaxWidth())
+                    Button(onClick = { auth.sendPasswordResetEmail(email).addOnCompleteListener { if (it.isSuccessful) { Toast.makeText(context, "Enviado", Toast.LENGTH_SHORT).show(); currentStep = "LOGIN" } else Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show() } }, modifier = Modifier.fillMaxWidth().height(50.dp)) { Text("Enviar enlace") }
+                    TextButton(onClick = { currentStep = "LOGIN" }) { Text("Volver atrás") }
+                }
             }
         }
     }

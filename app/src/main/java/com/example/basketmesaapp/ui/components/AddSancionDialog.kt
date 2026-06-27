@@ -10,6 +10,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,7 +27,7 @@ fun AddSancionDialog(
     onDismiss: () -> Unit,
     onConfirm: (Sancion) -> Unit
 ) {
-    var step by remember(sancionAEditar) { mutableStateOf(1) }
+    var step by remember(sancionAEditar) { mutableIntStateOf(1) }
 
     var fecha by remember(sancionAEditar) { mutableStateOf(sancionAEditar?.fecha ?: "") }
     var motivo by remember(sancionAEditar) { mutableStateOf(sancionAEditar?.motivo ?: "") }
