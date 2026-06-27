@@ -191,6 +191,7 @@ fun AddPartidoDialog(
             val parsedHour = try { if (hora.isNotEmpty()) hora.split(":")[0].toInt() else 16 } catch (e: Exception) { 16 }
             val parsedMinute = try { if (hora.isNotEmpty()) hora.split(":")[1].toInt() else 0 } catch (e: Exception) { 0 }
             var horaTemporal by remember { mutableStateOf(hora) }
+
             BaseStepDialog(
                 title = "Selecciona la hora",
                 onDismiss = onDismiss,
@@ -198,6 +199,8 @@ fun AddPartidoDialog(
                 onNext = {
                     val parts = horaTemporal.split(":")
                     val minNuevos = parts[0].toInt() * 60 + parts[1].toInt()
+
+                    // Lógica de conflicto
                     val conflicto = partidosExistentes.find { p ->
                         p.id != partidoAEditar?.id && p.fecha == fecha && run {
                             val minExist = try {
@@ -206,18 +209,24 @@ fun AddPartidoDialog(
                             kotlin.math.abs(minExist - minNuevos) < 105
                         }
                     }
+
                     hora = horaTemporal
                     if (conflicto != null) {
                         step = 99
                     } else {
-                        val p = (partidoAEditar ?: Partido()).copy(
-                            hora = hora, rol = userRol, autorizado3Vistas = autorizado3Vistas
-                        )
-                        onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
-                        onDismiss()
+                        if (campoAEditar != null) {
+                            // SI ES EDICIÓN: Guardamos y cerramos
+                            val p = (partidoAEditar ?: Partido()).copy(
+                                hora = hora, rol = userRol, autorizado3Vistas = autorizado3Vistas
+                            )
+                            onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
+                            onDismiss()
+                        } else {
+                            step = 3
+                        }
                     }
                 },
-                nextText = "Guardar"
+                nextText = if (campoAEditar != null) "Guardar" else "Siguiente"
             ) {
                 CustomTimePicker(
                     initialHour = parsedHour,
