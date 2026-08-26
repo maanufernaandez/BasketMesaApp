@@ -23,35 +23,42 @@ object DataConstants {
         CategoriaConfig("Cadete Femenino 1ª", 11.30, 0.0),
         CategoriaConfig("Torneo Veteranos", 13.35, 0.0),
         CategoriaConfig("Torneo Veteranas", 13.35, 0.0),
-        CategoriaConfig("Copa Navarra", 24.95, 0.0),
+        CategoriaConfig("Copa Navarra Femenina", 24.95, 0.0),
+        CategoriaConfig("Copa Navarra Masculina", 24.95, 0.0),
         CategoriaConfig("Selección Navarra", 0.0, 0.0)
     )
 
     val categoriasData = mapOf(
-        "LF CHallenge" to listOf(
-            Equipo("Al-Qázeres Extremadura", emptyList()),
+        "LF Challenge" to listOf(
+            Equipo("Al-Qázeres Ext", emptyList()),
             Equipo("Ardoi", listOf("Arrosadía", "Municipal (Zizur)").sorted()),
             Equipo("Bosonit Unibasket", emptyList()),
-            Equipo("Cajasol Baloncesto Sevilla Fem", emptyList()),
+            Equipo("Cajasol Sevilla", emptyList()),
             Equipo("Domusa Teknik ISB", emptyList()),
-            Equipo("Fustema NBF Castelló", emptyList()),
-            Equipo("La Cordá de Paterna NB", emptyList()),
-            Equipo("La Laguna Toyota Adareva", emptyList()),
+            Equipo("Fustecma Castelló", emptyList()),
+            Equipo("Juventut Badalona", emptyList()),
+            Equipo("La Laguna Toyota", emptyList()),
             Equipo("Lima-Horta Barcelona", emptyList()),
             Equipo("Melilla", emptyList()),
+            Equipo("Mipelletymas Leon", emptyList()),
             Equipo("Recoletas Zamora", emptyList()),
-            Equipo("Unicaja Mijas", emptyList())
+            Equipo("Spar Gran Canaria", emptyList()),
+            Equipo("Sparking Truth Maristas", emptyList()),
+            Equipo("Unicaja Mijas", emptyList()),
+            Equipo("Valencia Basket", emptyList())
         ),
         "Liga Eba" to listOf(
-            Equipo("Blendio", emptyList()),
-            Equipo("De Morro Fino Cantbasket04", emptyList()),
-            Equipo("Iruki Take", emptyList()),
+            Equipo("Baloncesto La Flecha", emptyList()),
+            Equipo("Cantbasket04", emptyList()),
+            Equipo("Deusto Loiola", emptyList()),
+            Equipo("Hotel 4Postes Avila", emptyList()),
+            Equipo("Lis Data Solutions Bezana", emptyList()),
+            Equipo("Los Arcos CB Solares", emptyList()),
             Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
             Equipo("Piélagos", emptyList()),
-            Equipo("Recoletas Salud Carbajosa", emptyList()),
-            Equipo("Restaurante los Arcos CB Solares", emptyList()),
+            Equipo("San Prudencio", emptyList()),
+            Equipo("Teknei Bizkaia Zornotza", emptyList()),
             Equipo("Ulacia ZKE", emptyList()),
-            Equipo("Universidad Deusto Loiola", emptyList()),
             Equipo("Valle de Egüés", listOf("Sarriguren"))
         ),
         "1ª Division Femenina" to listOf(
@@ -59,41 +66,50 @@ object DataConstants {
             Equipo("Araski", emptyList()),
             Equipo("Askartza Claret", emptyList()),
             Equipo("Chubby Apps Araba", emptyList()),
+            Equipo("Deusto Loiola", emptyList()),
+            Equipo("Gernika KESB", emptyList()),
             Equipo("Graficas Juaristi", emptyList()),
             Equipo("Hondarribia Ikasbasket", emptyList()),
             Equipo("Ibaeta Basket Easo", emptyList()),
             Equipo("La Salle Versia", emptyList()),
             Equipo("Navarro Villoslada", listOf("Ermitagaña", "Iribarren").sorted()),
             Equipo("San Ignacio", listOf("San Ignacio")),
-            Equipo("Tabirako Baque", emptyList())
+            Equipo("Tabirako Baque", emptyList()),
+            Equipo("Vascons Getxo", emptyList())
         ),
         "1ª Division Masculina" to listOf(
             Equipo("Aisla Armeti Ibaizabal", emptyList()),
+            Equipo("Araberri Basket Club", emptyList()),
             Equipo("Askartza Claret", emptyList()),
-            Equipo("Atletico San Sebastian", emptyList()),
+            Equipo("Baskonia", emptyList()),
             Equipo("CB Santurtzi SK", emptyList()),
             Equipo("Disdira Bitxitegia ISB", emptyList()),
             Equipo("Easo Basket", emptyList()),
-            Equipo("Hydropyc Urgatzi", emptyList()),
-            Equipo("La Salle Versia", emptyList()),
             Equipo("Leioa SBT", emptyList()),
+            Equipo("Mondragon Unibertsitatea", emptyList()),
             Equipo("Navasket 1DM", listOf("Arrosadia", "Teresianas").sorted()),
-            Equipo("San Prudencio", emptyList()),
-            Equipo("Tabirako Baque", emptyList()),
+            Equipo("Spirit Hotels Santutxu", emptyList()),
+            Equipo("Urgatzi", emptyList()),
             Equipo("Valle de Egüés", listOf("Sarriguren")),
             Equipo("Vascons Getxo", emptyList())
         ),
         "2ª Division Femenina" to listOf(
             Equipo("Alkivent Toju", emptyList()),
             Equipo("Atletico San Sebastian", emptyList()),
+            Equipo("Axa Ortiz de Zarate Amurrio", emptyList()),
             Equipo("Escolapios Bilbao", emptyList()),
-            Equipo("Hostal Lola Gazte Berriak", listOf("Idaki (Ansoain)")),
+            Equipo("Fisioterapia Unamuno", emptyList()),
+            Equipo("Gazte Berriak", listOf("Idaki (Ansoain)")),
+            Equipo("Goierri Aldapa", emptyList()),
             Equipo("Lagunak", listOf("Municipal (Barañain)")),
             Equipo("Liceo Monjardín", listOf("Liceo Monjardín")),
             Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
             Equipo("Navasket 2DF", listOf("Teresianas")),
+            Equipo("Ondoan Ointxe", emptyList()),
             Equipo("Spirit Hotels Santutxu", emptyList()),
-            Equipo("Valle de Egüés", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
+            Equipo("Tabirako Baque", emptyList()),
+            Equipo("Valle de Egüés", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted()),
+            Equipo("Zornotza St Bilbao Basket", emptyList())
         ),
         "2ª Division Masculina" to listOf(
             Equipo("Anpri Gazte Berriak", listOf("Idaki (Ansoain)")),
@@ -272,13 +288,21 @@ object DataConstants {
             Equipo("Navarro Villoslada A", listOf("Ermitagaña", "Iribarren").sorted()),
             Equipo("San Cernin \"A\"", listOf("San Cernin"))
         ),
-        "Copa Navarra" to listOf(
-            Equipo("Ademar Apolo", listOf("Maristas")),
-            Equipo("Aranguren Mutilbasket A", listOf("Irulegui")),
+        "Copa Navarra Femenina" to listOf(
+            Equipo("Aranguren Mutilbasket", listOf("Aranguren (Piscinas)", "Irulegui").sorted()),
+            Equipo("C.B Navasket S.K", listOf("Teresianas")),
             Equipo("Gazte Berriak", listOf("Idaki")),
+            Equipo("Lagunak", listOf("Municipal (Barañain)")),
+            Equipo("Liceo Monjardín", listOf("Liceo Monjardín")),
             Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
-            Equipo("Navarro Villoslada A", listOf("Ermitagaña", "Iribarren").sorted()),
-            Equipo("San Cernin \"A\"", listOf("San Cernin"))
+            Equipo("Navarro Villoslada", listOf("Ermitagaña", "Iribarren").sorted()),
+            Equipo("San Ignacio Premo", listOf("San Ignacio")),
+            Equipo("Valle de Egües", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
+        ),
+        "Copa Navarra Masculina" to listOf(
+            Equipo("C.B Navasket S.K", listOf("Teresianas")),
+            Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
+            Equipo("Valle de Egües", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
         )
     )
 

@@ -86,6 +86,10 @@ fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
     var userRol by remember { mutableStateOf("Oficial de Mesa") }
     var autorizado3Vistas by remember { mutableStateOf(false) }
 
+    // ELEVAMOS EL ESTADO AQUÍ: Así memoriza si están plegados o no aunque cambies de pantalla
+    val expandedStates = remember { androidx.compose.runtime.mutableStateMapOf<String, Boolean>() }
+    val expandedSancionesStates = remember { androidx.compose.runtime.mutableStateMapOf<String, Boolean>() }
+
     LaunchedEffect(Unit) {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         if (uid != null) {
@@ -149,6 +153,8 @@ fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
                 PartidosTab(
                     partidos = partidos,
                     sanciones = sanciones,
+                    expandedStates = expandedStates, // Pasamos la memoria
+                    expandedSancionesStates = expandedSancionesStates, // Pasamos la memoria
                     onEdit = { partido, campo -> partidoEnEdicion = partido; campoAEditar = campo; showAddDialog = true },
                     onEditSancion = { sancion -> sancionEnEdicion = sancion; showSancionDialog = true },
                     onDeletePartido = { id ->
@@ -224,6 +230,8 @@ fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
 fun PartidosTab(
     partidos: List<Partido>?,
     sanciones: List<Sancion>?,
+    expandedStates: androidx.compose.runtime.snapshots.SnapshotStateMap<String, Boolean>,
+    expandedSancionesStates: androidx.compose.runtime.snapshots.SnapshotStateMap<String, Boolean>,
     onEdit: (Partido, String?) -> Unit,
     onEditSancion: (Sancion) -> Unit,
     onDeletePartido: (String) -> Unit,
@@ -251,8 +259,8 @@ fun PartidosTab(
         }
 
         val allKeys = (partidos.map { getMonthKey(it.fecha) } + sanciones.map { getMonthKey(it.fecha) }).distinct().sortedDescending()
-        val expandedStates = remember { androidx.compose.runtime.mutableStateMapOf<String, Boolean>() }
-        val expandedSancionesStates = remember { androidx.compose.runtime.mutableStateMapOf<String, Boolean>() }
+
+        // Quitado el remember de aquí, ahora viene por parámetro
 
         LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(top = 16.dp, bottom = 120.dp, start = 2.dp, end = 2.dp)) {
             allKeys.forEach { mesKey ->
