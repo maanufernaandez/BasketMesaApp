@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -16,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -37,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.basketmesaapp.model.CategoriaConfig
@@ -61,8 +64,9 @@ fun AddPartidoDialog(
     val pasoInicial = when (campoAEditar) {
         "Fecha" -> 1
         "Hora" -> 2
-        "Oficiales", "Árbitros" -> 7
-        else -> 1
+        "Oficiales", "Árbitros" -> if (partidoAEditar?.isAmistoso == true) 100 else 7
+        null -> 1
+        else -> if (partidoAEditar?.isAmistoso == true) 100 else 1
     }
 
     var step by remember(partidoAEditar) { mutableIntStateOf(pasoInicial) }
@@ -76,14 +80,26 @@ fun AddPartidoDialog(
     var cobraDieta by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.cobraDieta ?: false) }
     val fueraPamplona by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.fueraPamplona ?: false) }
     var tipoDesplazamiento by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.tipoDesplazamiento ?: "Ninguno") }
-    val plusDesplazamiento by remember(partidoAEditar) {
+
+    // Convertido a VAR para poder editarlo en Amistosos
+    var plusDesplazamiento by remember(partidoAEditar) {
         mutableStateOf(
             if (partidoAEditar != null && partidoAEditar.plusDesplazamiento > 0.0)
                 partidoAEditar.plusDesplazamiento.toString()
             else ""
         )
     }
+
     var invertirLocalia by remember(partidoAEditar) { mutableStateOf(false) }
+
+    // NUEVAS VARIABLES ESTADO PARA AMISTOSOS
+    var isAmistoso by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.isAmistoso ?: false) }
+    var tarifaManual by remember(partidoAEditar) {
+        mutableStateOf(if (partidoAEditar != null && partidoAEditar.tarifaManual > 0.0) partidoAEditar.tarifaManual.toString() else "")
+    }
+    var tieneDesplazamiento by remember(partidoAEditar) {
+        mutableStateOf(partidoAEditar != null && partidoAEditar.plusDesplazamiento > 0.0)
+    }
 
     fun verificarFueraDeHorario(catId: String, fechaStr: String, horaStr: String): Boolean {
         if (fechaStr.isEmpty() || horaStr.isEmpty() || !horaStr.contains(":")) return false
@@ -200,7 +216,6 @@ fun AddPartidoDialog(
                     val parts = horaTemporal.split(":")
                     val minNuevos = parts[0].toInt() * 60 + parts[1].toInt()
 
-                    // Lógica de conflicto
                     val conflicto = partidosExistentes.find { p ->
                         p.id != partidoAEditar?.id && p.fecha == fecha && run {
                             val minExist = try {
@@ -269,9 +284,26 @@ fun AddPartidoDialog(
                         contentPadding = PaddingValues(vertical = 16.dp),
                         modifier = Modifier.fillMaxSize().fadingEdge(listState)
                     ) {
+                        // NUEVO BOTÓN PARA AMISTOSOS
+                        item {
+                            TextButton(
+                                onClick = {
+                                    isAmistoso = true
+                                    categoriaId = if (categoriaId.isEmpty() || !categoriaId.contains("Amistoso")) "Amistoso" else categoriaId
+                                    step = 100
+                                },
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text("Amistoso (Manual)", fontSize = 17.sp, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.primary)
+                            }
+                            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant, thickness = 2.dp)
+                        }
+
                         items(categorias) { cat ->
                             TextButton(
                                 onClick = {
+                                    isAmistoso = false
                                     if (cat.id == "Selección Navarra") {
                                         categoriaId = cat.id
                                         step = 31
@@ -311,6 +343,87 @@ fun AddPartidoDialog(
                 }
             }
         }
+
+        // PASO 100: FORMULARIO EXCLUSIVO AMISTOSOS (MANUAL)
+        100 -> {
+            val listState = rememberLazyListState()
+            BaseStepDialog(
+                title = "Datos del Amistoso",
+                onDismiss = onDismiss,
+                onBack = { step = 3 },
+                onNext = {
+                    if (campoAEditar != null) {
+                        val p = (partidoAEditar ?: Partido()).copy(
+                            categoriaId = categoriaId, equipoLocal = local, equipoVisitante = visitante,
+                            polideportivo = polideportivo, isAmistoso = true,
+                            tarifaManual = tarifaManual.replace(",", ".").toDoubleOrNull() ?: 0.0,
+                            plusDesplazamiento = if (tieneDesplazamiento) plusDesplazamiento.replace(",", ".").toDoubleOrNull() ?: 0.0 else 0.0
+                        )
+                        onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
+                        onDismiss()
+                    } else step = 9
+                },
+                nextEnabled = categoriaId.isNotBlank() && local.isNotBlank() && visitante.isNotBlank() && polideportivo.isNotBlank() && tarifaManual.isNotBlank(),
+                nextText = if (campoAEditar != null) "Guardar" else "Siguiente"
+            ) {
+                LazyColumn(
+                    state = listState,
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp),
+                    modifier = Modifier.fillMaxWidth().fadingEdge(listState)
+                ) {
+                    item {
+                        OutlinedTextField(
+                            value = categoriaId, onValueChange = { categoriaId = it },
+                            label = { Text("Categoría (Ej: Amistoso Cadete)") }, modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = local, onValueChange = { local = it },
+                            label = { Text("Equipo Local") }, modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = visitante, onValueChange = { visitante = it },
+                            label = { Text("Equipo Visitante") }, modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = polideportivo, onValueChange = { polideportivo = it },
+                            label = { Text("Polideportivo") }, modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = tarifaManual,
+                            onValueChange = { tarifaManual = it.replace(Regex("[^0-9.,]"), "") },
+                            label = { Text("Tarifa del partido (€)") }, modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().clickable { tieneDesplazamiento = !tieneDesplazamiento }) {
+                            Checkbox(checked = tieneDesplazamiento, onCheckedChange = { tieneDesplazamiento = it })
+                            Text("¿Tiene desplazamiento?", fontWeight = FontWeight.Bold)
+                        }
+                        if (tieneDesplazamiento) {
+                            Spacer(Modifier.height(8.dp))
+                            OutlinedTextField(
+                                value = plusDesplazamiento,
+                                onValueChange = { plusDesplazamiento = it.replace(Regex("[^0-9.,]"), "") },
+                                label = { Text("Plus por desplazamiento (€)") }, modifier = Modifier.fillMaxWidth(),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
         31 -> {
             val subcats = listOf(
                 "Junior Masculino", "Junior Femenino", "Cadete Masculino", "Cadete Femenino",
@@ -600,7 +713,7 @@ fun AddPartidoDialog(
         8 -> {
             val pueblos = listOf("Alsasua", "Estella", "Tudela", "Puente", "San Adrián", "Tafalla", "Sangüesa", "Peralta")
             val esDesplazamiento = pueblos.any { polideportivo.contains(it, ignoreCase = true) }
-            LaunchedEffect(Unit) { if (!esDesplazamiento && campoAEditar == null) step = 9 }
+            LaunchedEffect(Unit) { if (!esDesplazamiento && campoAEditar == null && !isAmistoso) step = 9 }
 
             BaseStepDialog(
                 title = "Extras",
@@ -684,7 +797,8 @@ fun AddPartidoDialog(
                 title = "Resumen del Partido",
                 onDismiss = onDismiss,
                 onBack = {
-                    step = if (categoriaId.contains("Selección Navarra"))
+                    step = if (isAmistoso) 100
+                    else if (categoriaId.contains("Selección Navarra"))
                         (if (polideportivo == "Larrabide") 32 else 33)
                     else if (seSaltoPaso8) (if (requiresOfficialSelection) 7 else 6) else 8
                 },
@@ -692,11 +806,16 @@ fun AddPartidoDialog(
                     val partidoGenerado = Partido(
                         fecha = fecha, hora = hora, polideportivo = polideportivo,
                         categoriaId = categoriaId, equipoLocal = finalLocal, equipoVisitante = finalVisitante,
-                        numeroOficiales = numOficiales, cobraDieta = cobraDieta, fueraPamplona = fueraPamplona,
-                        tipoDesplazamiento = tipoDesplazamiento,
-                        plusDesplazamiento = plusDesplazamiento.toDoubleOrNull() ?: 0.0,
+                        numeroOficiales = if (isAmistoso) 1 else numOficiales, // No cuenta para estadisticas de nº oficiales
+                        cobraDieta = if (isAmistoso) false else cobraDieta,
+                        fueraPamplona = fueraPamplona,
+                        tipoDesplazamiento = if (isAmistoso) (if (tieneDesplazamiento) "Manual" else "Ninguno") else tipoDesplazamiento,
+                        plusDesplazamiento = if (isAmistoso) (if (tieneDesplazamiento) plusDesplazamiento.replace(",", ".").toDoubleOrNull() ?: 0.0 else 0.0) else (plusDesplazamiento.replace(",", ".").toDoubleOrNull() ?: 0.0),
                         userId = FirebaseAuth.getInstance().currentUser?.uid ?: "",
-                        rol = userRol, autorizado3Vistas = autorizado3Vistas
+                        rol = userRol,
+                        autorizado3Vistas = if (isAmistoso) false else autorizado3Vistas,
+                        isAmistoso = isAmistoso,
+                        tarifaManual = if (isAmistoso) tarifaManual.replace(",", ".").toDoubleOrNull() ?: 0.0 else 0.0
                     )
                     val partidoFinal = if (partidoAEditar != null)
                         partidoGenerado.copy(id = partidoAEditar.id)
@@ -724,14 +843,20 @@ fun AddPartidoDialog(
                             Spacer(Modifier.width(16.dp))
                             Text(categoriaFormateada, fontSize = 16.sp, fontWeight = FontWeight.Medium)
                         }
-                        if (textoOficiales.isNotEmpty()) {
+                        if (textoOficiales.isNotEmpty() && !isAmistoso) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Box(modifier = Modifier.size(28.dp), contentAlignment = Alignment.Center) { Text("👥", fontSize = 20.sp) }
                                 Spacer(Modifier.width(16.dp))
                                 Text(textoOficiales, fontSize = 16.sp, fontWeight = FontWeight.Medium)
                             }
                         }
-                        if (tipoDesplazamiento != "Ninguno") {
+                        if (isAmistoso && tieneDesplazamiento) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(modifier = Modifier.size(28.dp), contentAlignment = Alignment.Center) { Text("🚗", fontSize = 20.sp) }
+                                Spacer(Modifier.width(16.dp))
+                                Text("Desplazamiento extra: ${plusDesplazamiento.replace(",", ".")} €", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                            }
+                        } else if (tipoDesplazamiento != "Ninguno" && !isAmistoso) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Box(modifier = Modifier.size(28.dp), contentAlignment = Alignment.Center) { Text("🚗", fontSize = 20.sp) }
                                 Spacer(Modifier.width(16.dp))

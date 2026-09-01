@@ -6,6 +6,11 @@ import com.example.basketmesaapp.model.Partido
 object TarifaCalculator {
 
     fun calcularTotal(partido: Partido, categorias: List<CategoriaConfig>): Double {
+        // SI ES AMISTOSO, IGNORAMOS LAS REGLAS Y SUMAMOS LOS VALORES MANUALES
+        if (partido.isAmistoso) {
+            return partido.tarifaManual + partido.plusDesplazamiento
+        }
+
         val tarifaBase: Double
         val normalizedPartidoCat = partido.categoriaId.normalizeCategory()
 

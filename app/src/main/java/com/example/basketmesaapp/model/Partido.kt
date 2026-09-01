@@ -17,5 +17,7 @@ data class Partido(
     val totalPartido: Double = 0.0,
     val userId: String = "",
     val rol: String = "Oficial de Mesa",
-    var autorizado3Vistas: Boolean = false // NUEVO
+    var autorizado3Vistas: Boolean = false,
+    var isAmistoso: Boolean = false, // NUEVO
+    var tarifaManual: Double = 0.0 // NUEVO
 )
