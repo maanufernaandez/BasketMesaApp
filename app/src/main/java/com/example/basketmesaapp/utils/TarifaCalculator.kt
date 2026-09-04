@@ -55,7 +55,8 @@ object TarifaCalculator {
                     tarifaBase = if (partido.numeroOficiales == 4) 29.12 else 38.83
                 }
                 normalizedPartidoCat.contains("copanavarra") -> {
-                    tarifaBase = if (partido.numeroOficiales == 3) 16.65 else 24.95
+                    // AQUÍ ESTÁ EL CAMBIO: 24.95 sustituido por 25.45
+                    tarifaBase = if (partido.numeroOficiales == 3) 16.65 else 25.45
                 }
                 normalizedPartidoCat.contains("2ªdivisionfemenin") -> {
                     tarifaBase = if (partido.numeroOficiales == 1) {
