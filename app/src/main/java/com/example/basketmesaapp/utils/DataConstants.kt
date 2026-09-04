@@ -23,8 +23,8 @@ object DataConstants {
         CategoriaConfig("Cadete Femenino 1ª", 11.30, 0.0),
         CategoriaConfig("Torneo Veteranos", 13.35, 0.0),
         CategoriaConfig("Torneo Veteranas", 13.35, 0.0),
-        CategoriaConfig("Copa Navarra Femenina", 24.95, 0.0),
-        CategoriaConfig("Copa Navarra Masculina", 24.95, 0.0),
+        CategoriaConfig("Copa Navarra Femenina", 25.45, 0.0),
+        CategoriaConfig("Copa Navarra Masculina", 25.45, 0.0),
         CategoriaConfig("Selección Navarra", 0.0, 0.0)
     )
 
