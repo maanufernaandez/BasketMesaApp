@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.basketmesaapp.model.Partido
@@ -86,7 +87,6 @@ fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
     var userRol by remember { mutableStateOf("Oficial de Mesa") }
     var autorizado3Vistas by remember { mutableStateOf(false) }
 
-    // ELEVAMOS EL ESTADO AQUÍ: Así memoriza si están plegados o no aunque cambies de pantalla
     val expandedStates = remember { androidx.compose.runtime.mutableStateMapOf<String, Boolean>() }
     val expandedSancionesStates = remember { androidx.compose.runtime.mutableStateMapOf<String, Boolean>() }
 
@@ -118,109 +118,149 @@ fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background, scrolledContainerColor = MaterialTheme.colorScheme.surface)
                 )
-            },
-            floatingActionButton = {
-                Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .shadow(8.dp, RoundedCornerShape(50))
-                            .clip(RoundedCornerShape(50))
-                            .background(Brush.linearGradient(colors = listOf(MaterialTheme.colorScheme.primary, Color(0xFFFFB74D))))
-                            .clickable { partidoEnEdicion = null; showAddDialog = true }
-                            .padding(horizontal = 24.dp, vertical = 16.dp)
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = "Añadir Partido", tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("NUEVA DESIGNACIÓN", fontWeight = FontWeight.Black, fontSize = 14.sp, letterSpacing = 1.sp, color = MaterialTheme.colorScheme.onPrimary)
-                    }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .shadow(8.dp, RoundedCornerShape(50))
-                            .clip(RoundedCornerShape(50))
-                            .background(Brush.linearGradient(colors = listOf(Color(0xFFEF4444), Color(0xFF991B1B))))
-                            .clickable { sancionEnEdicion = null; showSancionDialog = true }
-                            .padding(horizontal = 24.dp, vertical = 16.dp)
-                    ) {
-                        Text("— NUEVA SANCIÓN", fontWeight = FontWeight.Black, fontSize = 14.sp, letterSpacing = 1.sp, color = Color.White)
-                    }
-                }
             }
         ) { paddingValues ->
-            Box(modifier = Modifier.padding(paddingValues)) {
-                PartidosTab(
-                    partidos = partidos,
-                    sanciones = sanciones,
-                    expandedStates = expandedStates, // Pasamos la memoria
-                    expandedSancionesStates = expandedSancionesStates, // Pasamos la memoria
-                    onEdit = { partido, campo -> partidoEnEdicion = partido; campoAEditar = campo; showAddDialog = true },
-                    onEditSancion = { sancion -> sancionEnEdicion = sancion; showSancionDialog = true },
-                    onDeletePartido = { id ->
-                        scope.launch {
-                            try {
-                                repository.eliminarPartido(id)
-                            } catch (e: Exception) {
-                                Toast.makeText(context, "Error al eliminar el partido", Toast.LENGTH_SHORT).show()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+
+                // --- BLOQUE DE BOTONES SUPERIORES ---
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // Botón Nueva Designación (Mitad Izquierda)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .weight(1f)
+                            .shadow(6.dp, RoundedCornerShape(16.dp))
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Brush.linearGradient(colors = listOf(MaterialTheme.colorScheme.primary, Color(0xFFFFB74D))))
+                            .clickable { partidoEnEdicion = null; showAddDialog = true }
+                            // Padding reducido a 8.dp para hacerlo más bajo
+                            .padding(vertical = 8.dp, horizontal = 4.dp)
+                    ) {
+                        // Icono más grande (28.dp)
+                        Icon(Icons.Default.Add, contentDescription = "Añadir Partido", tint = Color.White, modifier = Modifier.size(28.dp))
+                        Spacer(modifier = Modifier.height(2.dp))
+                        // Texto más grande (13.sp)
+                        Text(
+                            text = "NUEVA DESIGNACIÓN",
+                            fontWeight = FontWeight.Black,
+                            fontSize = 13.sp,
+                            lineHeight = 14.sp,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    // Botón Nueva Sanción (Mitad Derecha)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .weight(1f)
+                            .shadow(6.dp, RoundedCornerShape(16.dp))
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Brush.linearGradient(colors = listOf(Color(0xFFEF4444), Color(0xFF991B1B))))
+                            .clickable { sancionEnEdicion = null; showSancionDialog = true }
+                            // Padding reducido a 8.dp para hacerlo más bajo
+                            .padding(vertical = 8.dp, horizontal = 4.dp)
+                    ) {
+                        // Icono más grande (28.dp)
+                        Icon(Icons.Default.Add, contentDescription = "Añadir Sanción", tint = Color.White, modifier = Modifier.size(28.dp))
+                        Spacer(modifier = Modifier.height(2.dp))
+                        // Texto más grande (13.sp)
+                        Text(
+                            text = "NUEVA SANCIÓN",
+                            fontWeight = FontWeight.Black,
+                            fontSize = 13.sp,
+                            lineHeight = 14.sp,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                // --- LISTA DE PARTIDOS ---
+                Box(modifier = Modifier.weight(1f)) {
+                    PartidosTab(
+                        partidos = partidos,
+                        sanciones = sanciones,
+                        expandedStates = expandedStates,
+                        expandedSancionesStates = expandedSancionesStates,
+                        onEdit = { partido, campo -> partidoEnEdicion = partido; campoAEditar = campo; showAddDialog = true },
+                        onEditSancion = { sancion -> sancionEnEdicion = sancion; showSancionDialog = true },
+                        onDeletePartido = { id ->
+                            scope.launch {
+                                try {
+                                    repository.eliminarPartido(id)
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, "Error al eliminar el partido", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        },
+                        onDeleteSancion = { id ->
+                            scope.launch {
+                                try {
+                                    repository.eliminarSancion(id)
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, "Error al eliminar la sanción", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
-                    },
-                    onDeleteSancion = { id ->
+                    )
+                }
+            }
+
+            // --- DIÁLOGOS ---
+            if (showStats) {
+                EstadisticasScreen(
+                    partidos = partidos ?: emptyList(),
+                    sanciones = sanciones ?: emptyList(),
+                    userRol = userRol,
+                    onDismiss = { showStats = false }
+                )
+            }
+
+            if (showAddDialog) {
+                AddPartidoDialog(
+                    categorias = tarifas, partidosExistentes = partidos ?: emptyList(), partidoAEditar = partidoEnEdicion, campoAEditar = campoAEditar, userRol = userRol, autorizado3Vistas = autorizado3Vistas,
+                    onDismiss = { showAddDialog = false; partidoEnEdicion = null; campoAEditar = null },
+                    onConfirm = { nuevoPartido ->
+                        showAddDialog = false
+                        partidoEnEdicion = null
                         scope.launch {
                             try {
-                                repository.eliminarSancion(id)
+                                repository.guardarPartido(nuevoPartido.copy(totalPartido = TarifaCalculator.calcularTotal(nuevoPartido, tarifas)))
                             } catch (e: Exception) {
-                                Toast.makeText(context, "Error al eliminar la sanción", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Fallo al guardar designación", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
                 )
+            }
 
-                if (showStats) {
-                    EstadisticasScreen(
-                        partidos = partidos ?: emptyList(),
-                        sanciones = sanciones ?: emptyList(),
-                        userRol = userRol,
-                        onDismiss = { showStats = false }
-                    )
-                }
-
-                if (showAddDialog) {
-                    AddPartidoDialog(
-                        categorias = tarifas, partidosExistentes = partidos ?: emptyList(), partidoAEditar = partidoEnEdicion, campoAEditar = campoAEditar, userRol = userRol, autorizado3Vistas = autorizado3Vistas,
-                        onDismiss = { showAddDialog = false; partidoEnEdicion = null; campoAEditar = null },
-                        onConfirm = { nuevoPartido ->
-                            showAddDialog = false
-                            partidoEnEdicion = null
-                            scope.launch {
-                                try {
-                                    repository.guardarPartido(nuevoPartido.copy(totalPartido = TarifaCalculator.calcularTotal(nuevoPartido, tarifas)))
-                                } catch (e: Exception) {
-                                    Toast.makeText(context, "Fallo al guardar designación", Toast.LENGTH_SHORT).show()
-                                }
+            if (showSancionDialog) {
+                AddSancionDialog(
+                    sancionAEditar = sancionEnEdicion,
+                    onDismiss = { showSancionDialog = false; sancionEnEdicion = null },
+                    onConfirm = { nuevaSancion ->
+                        showSancionDialog = false
+                        sancionEnEdicion = null
+                        scope.launch {
+                            try {
+                                repository.guardarSancion(nuevaSancion)
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "No tienes permisos en Firebase para Sanciones", Toast.LENGTH_LONG).show()
                             }
                         }
-                    )
-                }
-
-                if (showSancionDialog) {
-                    AddSancionDialog(
-                        sancionAEditar = sancionEnEdicion,
-                        onDismiss = { showSancionDialog = false; sancionEnEdicion = null },
-                        onConfirm = { nuevaSancion ->
-                            showSancionDialog = false
-                            sancionEnEdicion = null
-                            scope.launch {
-                                try {
-                                    repository.guardarSancion(nuevaSancion)
-                                } catch (e: Exception) {
-                                    Toast.makeText(context, "No tienes permisos en Firebase para Sanciones", Toast.LENGTH_LONG).show()
-                                }
-                            }
-                        }
-                    )
-                }
+                    }
+                )
             }
         }
     }
@@ -260,13 +300,15 @@ fun PartidosTab(
 
         val allKeys = (partidos.map { getMonthKey(it.fecha) } + sanciones.map { getMonthKey(it.fecha) }).distinct().sortedDescending()
 
-        // Quitado el remember de aquí, ahora viene por parámetro
-
-        LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(top = 16.dp, bottom = 120.dp, start = 2.dp, end = 2.dp)) {
+        LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp, start = 2.dp, end = 2.dp)) {
             allKeys.forEach { mesKey ->
                 val mesName = getMonthName(mesKey)
-                val partidosMes = partidos.filter { getMonthKey(it.fecha) == mesKey }.sortedWith(compareBy({ it.fecha }, { it.hora }))
-                val sancionesMes = sanciones.filter { getMonthKey(it.fecha) == mesKey }.sortedBy { it.fecha }
+
+                val partidosMes = partidos.filter { getMonthKey(it.fecha) == mesKey }
+                    .sortedWith(compareByDescending<Partido> { it.fecha }.thenByDescending { it.hora })
+
+                val sancionesMes = sanciones.filter { getMonthKey(it.fecha) == mesKey }
+                    .sortedByDescending { it.fecha }
 
                 val totalPartidos = partidosMes.sumOf { it.totalPartido }
                 val totalSanciones = sancionesMes.sumOf { it.importe }

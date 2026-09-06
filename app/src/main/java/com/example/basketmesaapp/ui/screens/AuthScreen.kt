@@ -104,8 +104,24 @@ fun AuthScreen(onAuthSuccess: () -> Unit) {
                         shape = RoundedCornerShape(12.dp)
                     ) { Text("Entrar", fontSize = 16.sp, fontWeight = FontWeight.Bold) }
 
-                    TextButton(onClick = { currentStep = "FORGOT" }) { Text("¿Has olvidado tu contraseña?") }
-                    TextButton(onClick = { currentStep = "REGISTER" }) { Text("¿No tienes cuenta? Regístrate") }
+                    // Agrupamos los dos botones sin forzar una altura que corte el texto
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(0.dp),
+                        modifier = Modifier.padding(top = 4.dp)
+                    ) {
+                        TextButton(
+                            onClick = { currentStep = "FORGOT" },
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp),
+                            modifier = Modifier.defaultMinSize(minHeight = 34.dp)
+                        ) { Text("¿Has olvidado tu contraseña?") }
+
+                        TextButton(
+                            onClick = { currentStep = "REGISTER" },
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp),
+                            modifier = Modifier.defaultMinSize(minHeight = 34.dp)
+                        ) { Text("¿No tienes cuenta? Regístrate") }
+                    }
                 }
 
                 "REGISTER" -> {
@@ -120,7 +136,6 @@ fun AuthScreen(onAuthSuccess: () -> Unit) {
                         onValueChange = { password = it.replace(" ", "") },
                         label = { Text("Contraseña") },
                         isError = passwordError,
-                        // Solución al espacio extra: es null si no hay error
                         supportingText = if (passwordError) { { Text("Mínimo 8 caracteres, 1 mayús, 1 minús, 1 número", color = Color.Red) } } else null,
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         trailingIcon = { IconButton(onClick = { passwordVisible = !passwordVisible }) { Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff, null) } },
@@ -132,7 +147,6 @@ fun AuthScreen(onAuthSuccess: () -> Unit) {
                         onValueChange = { confirmPassword = it.replace(" ", "") },
                         label = { Text("Repetir Contraseña") },
                         isError = confirmError,
-                        // Solución al espacio extra: es null si no hay error
                         supportingText = if (confirmError) { { Text("Las contraseñas no coinciden", color = Color.Red) } } else null,
                         visualTransformation = if (confirmVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         trailingIcon = { IconButton(onClick = { confirmVisible = !confirmVisible }) { Icon(if (confirmVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff, null) } },
@@ -165,7 +179,6 @@ fun AuthScreen(onAuthSuccess: () -> Unit) {
                         }
                     }
 
-                    // Botones modernizados y reducidos
                     Button(
                         onClick = {
                             if (rol.isEmpty()) Toast.makeText(context, "Selecciona un rol", Toast.LENGTH_SHORT).show()

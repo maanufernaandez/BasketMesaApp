@@ -60,16 +60,19 @@ fun EstadisticasScreen(
         title = { Text("Estadísticas", fontWeight = FontWeight.ExtraBold) },
         text = {
             LazyColumn(modifier = Modifier.fillMaxWidth().height(400.dp)) {
+                // Sección fija: siempre desplegada y sin botón
                 item {
                     StatMenuSection(
                         title = "TOTAL TEMPORADA",
                         datos = partidos,
                         sanciones = sanciones,
-                        isExpanded = expandedStates["TOTAL"] ?: false,
+                        isExpanded = true,
+                        isFixed = true, // Le indicamos que es fijo
                         userRol = userRol,
-                        onToggle = { expandedStates["TOTAL"] = !(expandedStates["TOTAL"] ?: false) }
+                        onToggle = { }
                     )
                 }
+                // Secciones de los meses: desplegables normales
                 allKeys.forEach { mesKey ->
                     val mesName = getMonthName(mesKey)
                     val partidosMes = partidos.filter { getMonthKey(it.fecha) == mesKey }
@@ -80,6 +83,7 @@ fun EstadisticasScreen(
                             datos = partidosMes,
                             sanciones = sancionesMes,
                             isExpanded = expandedStates[mesKey] ?: false,
+                            isFixed = false, // Es interactivo
                             userRol = userRol,
                             onToggle = { expandedStates[mesKey] = !(expandedStates[mesKey] ?: false) }
                         )
@@ -97,6 +101,7 @@ fun StatMenuSection(
     datos: List<Partido>,
     sanciones: List<Sancion>,
     isExpanded: Boolean,
+    isFixed: Boolean = false,
     userRol: String,
     onToggle: () -> Unit
 ) {
@@ -125,7 +130,8 @@ fun StatMenuSection(
 
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         Surface(
-            modifier = Modifier.fillMaxWidth().clickable { onToggle() },
+            // Solo es "clickable" si no está marcado como fijo
+            modifier = if (isFixed) Modifier.fillMaxWidth() else Modifier.fillMaxWidth().clickable { onToggle() },
             shape = RoundedCornerShape(50),
             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
             border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
@@ -136,12 +142,15 @@ fun StatMenuSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                    Icon(
-                        imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Desplegar",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    // Ocultamos el icono de la flecha si es fijo
+                    if (!isFixed) {
+                        Icon(
+                            imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Desplegar",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
                     Text(text = title, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.primary, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                 }
                 Spacer(modifier = Modifier.width(8.dp))

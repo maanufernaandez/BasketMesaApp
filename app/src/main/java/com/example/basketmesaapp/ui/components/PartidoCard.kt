@@ -1,5 +1,6 @@
 package com.example.basketmesaapp.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -56,6 +60,9 @@ fun PartidoCard(partido: Partido, onEdit: (Partido, String?) -> Unit, onDelete: 
     var showInfoDialog by remember { mutableStateOf(false) }
     var infoTitle by remember { mutableStateOf("") }
     var infoMessage by remember { mutableStateOf("") }
+
+    // Variable para controlar si se muestra el diálogo de confirmación de borrado
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     val fechaFormateada = try {
         val dateObj = java.text.SimpleDateFormat("yyyy-MM-dd", localeSpanish).parse(partido.fecha)
@@ -112,6 +119,41 @@ fun PartidoCard(partido: Partido, onEdit: (Partido, String?) -> Unit, onDelete: 
             title = { Text(infoTitle, fontWeight = FontWeight.Bold) },
             text = { Text(infoMessage) },
             confirmButton = { TextButton(onClick = { showInfoDialog = false }) { Text("Aceptar") } }
+        )
+    }
+
+    // Diálogo de confirmación para eliminar
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = {
+                Text("Eliminar designación", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text("¿Estás seguro de que quieres eliminar este partido? Esta acción no se puede deshacer.")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDeleteDialog = false
+                        onDelete(partido.id) // Ejecutamos el borrado real
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text("Eliminar", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { showDeleteDialog = false },
+                    // CAMBIO APLICADO: Borde y texto en color rojo
+                    border = BorderStroke(1.dp, Color(0xFFEF4444))
+                ) {
+                    Text("Cancelar", color = Color(0xFFEF4444))
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.surface,
+            shape = RoundedCornerShape(16.dp)
         )
     }
 
@@ -272,7 +314,9 @@ fun PartidoCard(partido: Partido, onEdit: (Partido, String?) -> Unit, onDelete: 
                 IconButton(onClick = { showSelectionSheet = true }, modifier = Modifier.size(36.dp)) {
                     Icon(Icons.Default.Edit, contentDescription = "Editar", tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))
                 }
-                IconButton(onClick = { onDelete(partido.id) }, modifier = Modifier.size(36.dp)) {
+
+                // Abre el diálogo en lugar de borrar directamente
+                IconButton(onClick = { showDeleteDialog = true }, modifier = Modifier.size(36.dp)) {
                     Icon(Icons.Default.Delete, contentDescription = "Borrar", tint = Color(0xFFEF4444).copy(alpha = 0.8f))
                 }
             }
