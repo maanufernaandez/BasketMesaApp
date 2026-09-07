@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.basketmesaapp.model.Partido
 import com.example.basketmesaapp.model.Sancion
+import com.example.basketmesaapp.model.TarifaReglaRemota
 import com.example.basketmesaapp.repository.FirestoreRepository
 import com.example.basketmesaapp.ui.components.AddPartidoDialog
 import com.example.basketmesaapp.ui.components.AddSancionDialog
@@ -74,6 +75,7 @@ fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
     val partidos by repository.getPartidos().collectAsState(initial = null)
     val sanciones by repository.getSanciones().collectAsState(initial = null)
     val tarifas = DataConstants.listaCategoriasFijas
+    val reglasTarifa by repository.getReglasTarifa().collectAsState(initial = emptyList<TarifaReglaRemota>())
 
     var showAddDialog by remember { mutableStateOf(false) }
     var showSancionDialog by remember { mutableStateOf(false) }
@@ -101,6 +103,17 @@ fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
                         autorizado3Vistas = doc.getBoolean("autorizado3Vistas") ?: false
                     }
                 }
+        }
+    }
+
+    // Siembra las tarifas en Firestore la primera vez que arranca la app
+    // (no hace nada si la colección "tarifas_reglas" ya tiene datos).
+    LaunchedEffect(Unit) {
+        try {
+            repository.sembrarReglasTarifaSiVacio()
+        } catch (e: Exception) {
+            // Sin conexión o sin permisos: no pasa nada, TarifaCalculator
+            // usará las tablas locales de fallback igualmente.
         }
     }
 
@@ -236,7 +249,7 @@ fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
                         partidoEnEdicion = null
                         scope.launch {
                             try {
-                                repository.guardarPartido(nuevoPartido.copy(totalPartido = TarifaCalculator.calcularTotal(nuevoPartido, tarifas)))
+                                repository.guardarPartido(nuevoPartido.copy(totalPartido = TarifaCalculator.calcularTotal(nuevoPartido, tarifas, reglasTarifa)))
                             } catch (e: Exception) {
                                 Toast.makeText(context, "Fallo al guardar designación", Toast.LENGTH_SHORT).show()
                             }

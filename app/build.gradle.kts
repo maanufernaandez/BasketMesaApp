@@ -70,6 +70,7 @@ dependencies {
     // Firebase Firestore
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation("com.google.firebase:firebase-firestore")
+    implementation(libs.junit.junit)
 
     // Herramientas de depuración
     debugImplementation("androidx.compose.ui:ui-tooling")

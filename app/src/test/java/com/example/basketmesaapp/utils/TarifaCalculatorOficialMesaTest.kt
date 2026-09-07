@@ -29,19 +29,19 @@ class TarifaCalculatorOficialMesaTest {
     }
 
     @Test
-    fun `seleccion navarra cadete devuelve 17,60`() {
+    fun `seleccion navarra cadete devuelve 17_60`() {
         val total = TarifaCalculator.calcularTotal(partidoOficial("Selección Navarra Cadete"), emptyList())
         assertEquals(17.60, total, 0.001)
     }
 
     @Test
-    fun `seleccion navarra infantil devuelve 17,60`() {
+    fun `seleccion navarra infantil devuelve 17_60`() {
         val total = TarifaCalculator.calcularTotal(partidoOficial("Selección Navarra Infantil"), emptyList())
         assertEquals(17.60, total, 0.001)
     }
 
     @Test
-    fun `seleccion navarra mini devuelve 13,40`() {
+    fun `seleccion navarra mini devuelve 13_40`() {
         val total = TarifaCalculator.calcularTotal(partidoOficial("Selección Navarra Mini"), emptyList())
         assertEquals(13.40, total, 0.001)
     }
@@ -65,37 +65,37 @@ class TarifaCalculatorOficialMesaTest {
     }
 
     @Test
-    fun `liga eba con 4 oficiales devuelve 29,12`() {
+    fun `liga eba con 4 oficiales devuelve 29_12`() {
         val total = TarifaCalculator.calcularTotal(partidoOficial("Liga Eba", numeroOficiales = 4), emptyList())
         assertEquals(29.12, total, 0.001)
     }
 
     @Test
-    fun `liga eba con otro numero de oficiales devuelve 38,83`() {
+    fun `liga eba con otro numero de oficiales devuelve 38_83`() {
         val total = TarifaCalculator.calcularTotal(partidoOficial("Liga Eba", numeroOficiales = 3), emptyList())
         assertEquals(38.83, total, 0.001)
     }
 
     @Test
-    fun `copa navarra con 3 oficiales devuelve 16,65`() {
+    fun `copa navarra con 3 oficiales devuelve 16_65`() {
         val total = TarifaCalculator.calcularTotal(partidoOficial("Copa Navarra Femenina", numeroOficiales = 3), emptyList())
         assertEquals(16.65, total, 0.001)
     }
 
     @Test
-    fun `copa navarra con otro numero de oficiales devuelve 25,45`() {
+    fun `copa navarra con otro numero de oficiales devuelve 25_45`() {
         val total = TarifaCalculator.calcularTotal(partidoOficial("Copa Navarra Femenina", numeroOficiales = 1), emptyList())
         assertEquals(25.45, total, 0.001)
     }
 
     @Test
-    fun `2a division femenina con varios oficiales devuelve 31,60`() {
+    fun `2a division femenina con varios oficiales devuelve 31_60`() {
         val total = TarifaCalculator.calcularTotal(partidoOficial("2ª División Femenina", numeroOficiales = 3), emptyList())
         assertEquals(31.60, total, 0.001)
     }
 
     @Test
-    fun `2a division femenina en solitario sin autorizacion devuelve 47,40`() {
+    fun `2a division femenina en solitario sin autorizacion devuelve 47_40`() {
         val total = TarifaCalculator.calcularTotal(
             partidoOficial("2ª División Femenina", numeroOficiales = 1, autorizado3Vistas = false),
             emptyList()
@@ -113,7 +113,7 @@ class TarifaCalculatorOficialMesaTest {
     }
 
     @Test
-    fun `2a division masculina en solitario sin autorizacion devuelve 37,50`() {
+    fun `2a division masculina en solitario sin autorizacion devuelve 37_50`() {
         val total = TarifaCalculator.calcularTotal(
             partidoOficial("2ª División Masculina", numeroOficiales = 1, autorizado3Vistas = false),
             emptyList()
@@ -140,7 +140,7 @@ class TarifaCalculatorOficialMesaTest {
     }
 
     @Test
-    fun `senior 1a con varios oficiales devuelve 19,70`() {
+    fun `senior 1a con varios oficiales devuelve 19_70`() {
         val total = TarifaCalculator.calcularTotal(partidoOficial("Senior Masculino 1ª", numeroOficiales = 3), emptyList())
         assertEquals(19.70, total, 0.001)
     }

@@ -4,6 +4,11 @@ import com.example.basketmesaapp.model.Partido
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
+/**
+ * Cubre todas las reglas de [TarifaRulesArbitro] a través de la API pública
+ * [TarifaCalculator.calcularTotal], usando categoriaId "reales" (con acentos,
+ * espacios y mayúsculas) para verificar también [normalizeCategory].
+ */
 class TarifaCalculatorArbitroTest {
 
     private fun partidoArbitro(
@@ -34,37 +39,37 @@ class TarifaCalculatorArbitroTest {
     }
 
     @Test
-    fun `senior 1a con un oficial devuelve 58,60`() {
+    fun `senior 1a con un oficial devuelve 58_60`() {
         val total = TarifaCalculator.calcularTotal(partidoArbitro("Senior Masculino 1ª", numeroOficiales = 1), emptyList())
         assertEquals(58.60, total, 0.001)
     }
 
     @Test
-    fun `senior 1a con varios oficiales devuelve 29,30`() {
+    fun `senior 1a con varios oficiales devuelve 29_30`() {
         val total = TarifaCalculator.calcularTotal(partidoArbitro("Senior Masculino 1ª", numeroOficiales = 2), emptyList())
         assertEquals(29.30, total, 0.001)
     }
 
     @Test
-    fun `senior 2a con un oficial devuelve 46,50`() {
+    fun `senior 2a con un oficial devuelve 46_50`() {
         val total = TarifaCalculator.calcularTotal(partidoArbitro("Senior Femenino 2ª", numeroOficiales = 1), emptyList())
         assertEquals(46.50, total, 0.001)
     }
 
     @Test
-    fun `senior 2a con varios oficiales devuelve 23,25`() {
+    fun `senior 2a con varios oficiales devuelve 23_25`() {
         val total = TarifaCalculator.calcularTotal(partidoArbitro("Senior Femenino 2ª", numeroOficiales = 3), emptyList())
         assertEquals(23.25, total, 0.001)
     }
 
     @Test
-    fun `junior 1a con un oficial devuelve 44,70`() {
+    fun `junior 1a con un oficial devuelve 44_70`() {
         val total = TarifaCalculator.calcularTotal(partidoArbitro("Junior Masculino 1ª", numeroOficiales = 1), emptyList())
         assertEquals(44.70, total, 0.001)
     }
 
     @Test
-    fun `junior 1a con varios oficiales devuelve 22,35`() {
+    fun `junior 1a con varios oficiales devuelve 22_35`() {
         val total = TarifaCalculator.calcularTotal(partidoArbitro("Junior Masculino 1ª", numeroOficiales = 2), emptyList())
         assertEquals(22.35, total, 0.001)
     }
@@ -82,31 +87,31 @@ class TarifaCalculatorArbitroTest {
     }
 
     @Test
-    fun `cadete 1a con un oficial devuelve 24,65`() {
+    fun `cadete 1a con un oficial devuelve 24_65`() {
         val total = TarifaCalculator.calcularTotal(partidoArbitro("Cadete Masculino 1ª", numeroOficiales = 1), emptyList())
         assertEquals(24.65, total, 0.001)
     }
 
     @Test
-    fun `cadete 1a con varios oficiales devuelve 16,45`() {
+    fun `cadete 1a con varios oficiales devuelve 16_45`() {
         val total = TarifaCalculator.calcularTotal(partidoArbitro("Cadete Masculino 1ª", numeroOficiales = 2), emptyList())
         assertEquals(16.45, total, 0.001)
     }
 
     @Test
-    fun `veteranos con un oficial devuelve 32,90`() {
+    fun `veteranos con un oficial devuelve 32_90`() {
         val total = TarifaCalculator.calcularTotal(partidoArbitro("Torneo Veteranos", numeroOficiales = 1), emptyList())
         assertEquals(32.90, total, 0.001)
     }
 
     @Test
-    fun `veteranos con varios oficiales devuelve 16,45`() {
+    fun `veteranos con varios oficiales devuelve 16_45`() {
         val total = TarifaCalculator.calcularTotal(partidoArbitro("Torneo Veteranos", numeroOficiales = 2), emptyList())
         assertEquals(16.45, total, 0.001)
     }
 
     @Test
-    fun `copa navarra devuelve 43,85`() {
+    fun `copa navarra devuelve 43_85`() {
         val total = TarifaCalculator.calcularTotal(partidoArbitro("Copa Navarra Femenina"), emptyList())
         assertEquals(43.85, total, 0.001)
     }

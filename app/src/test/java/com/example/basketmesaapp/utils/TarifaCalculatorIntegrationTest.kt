@@ -27,7 +27,7 @@ class TarifaCalculatorIntegrationTest {
     }
 
     @Test
-    fun `total combina tarifa base, dieta y desplazamiento`() {
+    fun `total combina tarifa base dieta y desplazamiento`() {
         // Árbitro de Senior 1ª en solitario (58.60) + dieta de senior (no aplica
         // a árbitros según la tabla, la dieta es independiente del rol) +
         // desplazamiento fijo por polideportivo conocido.
