@@ -3,6 +3,8 @@ package com.example.basketmesaapp.utils
 import com.example.basketmesaapp.model.CategoriaConfig
 import com.example.basketmesaapp.model.Partido
 import com.example.basketmesaapp.model.TarifaReglaRemota
+import com.example.basketmesaapp.model.DesplazamientoRemoto
+import com.example.basketmesaapp.model.DietaRemota
 
 /**
  * Orquesta el cálculo del importe total de un partido.
@@ -24,7 +26,9 @@ object TarifaCalculator {
     fun calcularTotal(
         partido: Partido,
         categorias: List<CategoriaConfig>,
-        reglasRemotas: List<TarifaReglaRemota> = emptyList()
+        reglasRemotas: List<TarifaReglaRemota> = emptyList(),
+        reglasDesplazamiento: List<DesplazamientoRemoto> = emptyList(),
+        reglasDietas: List<DietaRemota> = emptyList()
     ): Double {
         // Los amistosos ignoran cualquier regla y usan los valores manuales.
         if (partido.isAmistoso) {
@@ -36,11 +40,11 @@ object TarifaCalculator {
         val reglasLocales = if (esArbitro) TarifaRulesArbitro.reglas else TarifaRulesOficialMesa.reglas
 
         val tarifaBase = TarifaReglaRemotaEvaluator.aplicar(reglasRemotas, categoriaNormalizada, partido, partido.rol)
-            ?: reglasLocales.aplicar(categoriaNormalizada, partido)
+            ?: TarifaReglaRemotaEvaluator.aplicar(reglasLocales, categoriaNormalizada, partido, partido.rol)
             ?: buscarTarifaEnConfig(categoriaNormalizada, categorias)
 
-        val dieta = DietaCalculator.calcular(categoriaNormalizada, partido.cobraDieta)
-        val desplazamiento = DesplazamientoCalculator.calcular(partido)
+        val dieta = DietaCalculator.calcular(categoriaNormalizada, partido.cobraDieta, reglasDietas)
+        val desplazamiento = DesplazamientoCalculator.calcular(partido, reglasDesplazamiento)
 
         return tarifaBase + dieta + desplazamiento
     }

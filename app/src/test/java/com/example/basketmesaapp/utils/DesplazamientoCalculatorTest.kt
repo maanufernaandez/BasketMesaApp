@@ -19,7 +19,7 @@ class DesplazamientoCalculatorTest {
             polideportivo = "Pabellón de Tudela",
             plusDesplazamiento = 0.0
         )
-        assertEquals(65.80, DesplazamientoCalculator.calcular(partido), 0.001)
+        assertEquals(71.44, DesplazamientoCalculator.calcular(partido), 0.001)
     }
 
     @Test
@@ -29,7 +29,7 @@ class DesplazamientoCalculatorTest {
             polideportivo = "Pabellón de Tudela",
             plusDesplazamiento = 0.0
         )
-        assertEquals(15.04, DesplazamientoCalculator.calcular(partido), 0.001)
+        assertEquals(16.92, DesplazamientoCalculator.calcular(partido), 0.001)
     }
 
     @Test
@@ -49,6 +49,6 @@ class DesplazamientoCalculatorTest {
             polideportivo = "polideportivo tudela norte",
             plusDesplazamiento = 0.0
         )
-        assertEquals(65.80, DesplazamientoCalculator.calcular(partido), 0.001)
+        assertEquals(71.44, DesplazamientoCalculator.calcular(partido), 0.001)
     }
 }

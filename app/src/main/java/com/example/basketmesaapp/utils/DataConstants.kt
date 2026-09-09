@@ -328,13 +328,20 @@ object DataConstants {
     const val TEMPORADAFIN: String = "2027-05-31"
 
     val preciosDesplazamiento = mapOf(
-        "Alsasua" to Pair(35.0, 8.0),
-        "Estella" to Pair(30.10, 6.88),
-        "Peralta" to Pair(50.0, 10.0),
-        "Puente" to Pair(20.0, 5.0),
-        "San Adrián" to Pair(56.7, 12.96),
-        "Sangüesa" to Pair(50.0, 10.0),
-        "Tafalla" to Pair(20.0, 5.0),
-        "Tudela" to Pair(65.80, 15.04)
+        "Alsasua" to Pair(38.0, 9.0),
+        "Estella" to Pair(32.68, 7.74),
+        "Peralta" to Pair(44.84, 10.62),
+        "Puente" to Pair(16.72, 3.96),
+        "San Adrián" to Pair(61.56, 14.58),
+        "Sangüesa" to Pair(34.20, 8.10),
+        "Tafalla" to Pair(26.60, 6.30),
+        "Tudela" to Pair(71.44, 16.92)
+    )
+
+    val dietasPorCategoria = mapOf(
+        "senior" to 14.0,
+        "2ªdivisionmas" to 14.0,
+        "junior" to 10.0,
+        "cadete" to 5.0
     )
 }

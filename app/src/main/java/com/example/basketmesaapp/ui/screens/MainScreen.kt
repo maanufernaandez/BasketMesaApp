@@ -1,6 +1,7 @@
 package com.example.basketmesaapp.ui.screens
 
 import android.widget.Toast
+import com.example.basketmesaapp.viewmodel.MainViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,7 +42,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,26 +56,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.basketmesaapp.model.Partido
 import com.example.basketmesaapp.model.Sancion
-import com.example.basketmesaapp.model.TarifaReglaRemota
-import com.example.basketmesaapp.repository.FirestoreRepository
 import com.example.basketmesaapp.ui.components.AddPartidoDialog
 import com.example.basketmesaapp.ui.components.AddSancionDialog
 import com.example.basketmesaapp.ui.components.PartidoCard
 import com.example.basketmesaapp.ui.components.SancionCard
 import com.example.basketmesaapp.utils.DataConstants
-import com.example.basketmesaapp.utils.TarifaCalculator
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
+fun MainScreen(viewModel: MainViewModel, onLogout: () -> Unit) {
     val context = LocalContext.current
-    val partidos by repository.getPartidos().collectAsState(initial = null)
-    val sanciones by repository.getSanciones().collectAsState(initial = null)
+
+    val partidos by viewModel.partidos.collectAsState()
+    val sanciones by viewModel.sanciones.collectAsState()
     val tarifas = DataConstants.listaCategoriasFijas
-    val reglasTarifa by repository.getReglasTarifa().collectAsState(initial = emptyList<TarifaReglaRemota>())
+    val reglasTarifa by viewModel.reglasTarifa.collectAsState()
+    val reglasDesplazamiento by viewModel.reglasDesplazamiento.collectAsState()
+    val reglasDietas by viewModel.reglasDietas.collectAsState()
+    val userRol by viewModel.userRol.collectAsState()
+    val autorizado3Vistas by viewModel.autorizado3Vistas.collectAsState()
 
     var showAddDialog by remember { mutableStateOf(false) }
     var showSancionDialog by remember { mutableStateOf(false) }
@@ -84,36 +83,13 @@ fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
     var campoAEditar by remember { mutableStateOf<String?>(null) }
     var sancionEnEdicion by remember { mutableStateOf<Sancion?>(null) }
     var showProfile by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-
-    var userRol by remember { mutableStateOf("Oficial de Mesa") }
-    var autorizado3Vistas by remember { mutableStateOf(false) }
 
     val expandedStates = remember { androidx.compose.runtime.mutableStateMapOf<String, Boolean>() }
     val expandedSancionesStates = remember { androidx.compose.runtime.mutableStateMapOf<String, Boolean>() }
 
     LaunchedEffect(Unit) {
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
-        if (uid != null) {
-            FirebaseFirestore.getInstance()
-                .collection("usuarios").document(uid)
-                .addSnapshotListener { doc, e ->
-                    if (e == null && doc != null && doc.exists()) {
-                        userRol = doc.getString("rol") ?: "Oficial de Mesa"
-                        autorizado3Vistas = doc.getBoolean("autorizado3Vistas") ?: false
-                    }
-                }
-        }
-    }
-
-    // Siembra las tarifas en Firestore la primera vez que arranca la app
-    // (no hace nada si la colección "tarifas_reglas" ya tiene datos).
-    LaunchedEffect(Unit) {
-        try {
-            repository.sembrarReglasTarifaSiVacio()
-        } catch (e: Exception) {
-            // Sin conexión o sin permisos: no pasa nada, TarifaCalculator
-            // usará las tablas locales de fallback igualmente.
+        viewModel.errores.collect { mensaje ->
+            Toast.makeText(context, mensaje, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -208,24 +184,8 @@ fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
                         expandedSancionesStates = expandedSancionesStates,
                         onEdit = { partido, campo -> partidoEnEdicion = partido; campoAEditar = campo; showAddDialog = true },
                         onEditSancion = { sancion -> sancionEnEdicion = sancion; showSancionDialog = true },
-                        onDeletePartido = { id ->
-                            scope.launch {
-                                try {
-                                    repository.eliminarPartido(id)
-                                } catch (e: Exception) {
-                                    Toast.makeText(context, "Error al eliminar el partido", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        },
-                        onDeleteSancion = { id ->
-                            scope.launch {
-                                try {
-                                    repository.eliminarSancion(id)
-                                } catch (e: Exception) {
-                                    Toast.makeText(context, "Error al eliminar la sanción", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
+                        onDeletePartido = { id -> viewModel.eliminarPartido(id) },
+                        onDeleteSancion = { id -> viewModel.eliminarSancion(id) }
                     )
                 }
             }
@@ -247,13 +207,7 @@ fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
                     onConfirm = { nuevoPartido ->
                         showAddDialog = false
                         partidoEnEdicion = null
-                        scope.launch {
-                            try {
-                                repository.guardarPartido(nuevoPartido.copy(totalPartido = TarifaCalculator.calcularTotal(nuevoPartido, tarifas, reglasTarifa)))
-                            } catch (e: Exception) {
-                                Toast.makeText(context, "Fallo al guardar designación", Toast.LENGTH_SHORT).show()
-                            }
-                        }
+                        viewModel.guardarPartido(nuevoPartido)
                     }
                 )
             }
@@ -265,13 +219,7 @@ fun MainScreen(repository: FirestoreRepository, onLogout: () -> Unit) {
                     onConfirm = { nuevaSancion ->
                         showSancionDialog = false
                         sancionEnEdicion = null
-                        scope.launch {
-                            try {
-                                repository.guardarSancion(nuevaSancion)
-                            } catch (e: Exception) {
-                                Toast.makeText(context, "No tienes permisos en Firebase para Sanciones", Toast.LENGTH_LONG).show()
-                            }
-                        }
+                        viewModel.guardarSancion(nuevaSancion)
                     }
                 )
             }

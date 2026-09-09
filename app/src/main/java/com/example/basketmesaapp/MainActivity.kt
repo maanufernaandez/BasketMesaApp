@@ -11,14 +11,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.example.basketmesaapp.repository.FirestoreRepository
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.basketmesaapp.ui.screens.AuthScreen
 import com.example.basketmesaapp.ui.screens.MainScreen
 import com.example.basketmesaapp.ui.theme.BasketMesaAppTheme
+import com.example.basketmesaapp.viewmodel.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
-    private val repository = FirestoreRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,8 +35,9 @@ class MainActivity : ComponentActivity() {
                             onAuthSuccess = { currentUser = FirebaseAuth.getInstance().currentUser }
                         )
                     } else {
+                        val viewModel: MainViewModel = viewModel()
                         MainScreen(
-                            repository = repository,
+                            viewModel = viewModel,
                             onLogout = {
                                 FirebaseAuth.getInstance().signOut()
                                 currentUser = null

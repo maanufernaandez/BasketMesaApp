@@ -78,7 +78,6 @@ fun AddPartidoDialog(
     var visitante by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoVisitante ?: "") }
     var numOficiales by remember(partidoAEditar) { mutableIntStateOf(partidoAEditar?.numeroOficiales ?: 2) }
     var cobraDieta by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.cobraDieta ?: false) }
-    val fueraPamplona by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.fueraPamplona ?: false) }
     var tipoDesplazamiento by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.tipoDesplazamiento ?: "Ninguno") }
 
     // Convertido a VAR para poder editarlo en Amistosos
@@ -661,8 +660,10 @@ fun AddPartidoDialog(
             val pueblos = listOf("Alsasua", "Estella", "Tudela", "Puente", "San Adrián", "Tafalla", "Sangüesa", "Peralta")
             val esDesplazamiento = pueblos.any { polideportivo.contains(it, ignoreCase = true) }
 
-            if (!opcionesOficiales.contains(numOficiales)) {
-                numOficiales = opcionesOficiales.first()
+            LaunchedEffect(opcionesOficiales) {
+                if (!opcionesOficiales.contains(numOficiales)) {
+                    numOficiales = opcionesOficiales.first()
+                }
             }
 
             BaseStepDialog(
@@ -675,7 +676,7 @@ fun AddPartidoDialog(
                             step = 8
                         } else {
                             val p = (partidoAEditar ?: Partido()).copy(
-                                numeroOficiales = numOficiales, voySolo = (numOficiales == 1),
+                                numeroOficiales = numOficiales,
                                 rol = userRol, autorizado3Vistas = autorizado3Vistas
                             )
                             onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
@@ -726,7 +727,7 @@ fun AddPartidoDialog(
                 onNext = {
                     if (campoAEditar != null) {
                         val p = (partidoAEditar ?: Partido()).copy(
-                            numeroOficiales = numOficiales, voySolo = (numOficiales == 1),
+                            numeroOficiales = numOficiales,
                             tipoDesplazamiento = tipoDesplazamiento, rol = userRol, autorizado3Vistas = autorizado3Vistas
                         )
                         onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
@@ -808,7 +809,6 @@ fun AddPartidoDialog(
                         categoriaId = categoriaId, equipoLocal = finalLocal, equipoVisitante = finalVisitante,
                         numeroOficiales = if (isAmistoso) 1 else numOficiales, // No cuenta para estadisticas de nº oficiales
                         cobraDieta = if (isAmistoso) false else cobraDieta,
-                        fueraPamplona = fueraPamplona,
                         tipoDesplazamiento = if (isAmistoso) (if (tieneDesplazamiento) "Manual" else "Ninguno") else tipoDesplazamiento,
                         plusDesplazamiento = if (isAmistoso) (if (tieneDesplazamiento) plusDesplazamiento.replace(",", ".").toDoubleOrNull() ?: 0.0 else 0.0) else (plusDesplazamiento.replace(",", ".").toDoubleOrNull() ?: 0.0),
                         userId = FirebaseAuth.getInstance().currentUser?.uid ?: "",

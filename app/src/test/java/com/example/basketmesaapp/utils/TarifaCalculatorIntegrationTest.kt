@@ -4,11 +4,6 @@ import com.example.basketmesaapp.model.Partido
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/**
- * Verifica el comportamiento de [TarifaCalculator.calcularTotal] como un
- * todo: el caso especial de partido amistoso, y la suma correcta de
- * tarifa base + dieta + desplazamiento para un caso realista.
- */
 class TarifaCalculatorIntegrationTest {
 
     @Test
@@ -39,9 +34,9 @@ class TarifaCalculatorIntegrationTest {
             tipoDesplazamiento = "Conductor",
             polideportivo = "Pabellón de Tafalla"
         )
-        // tarifaBase = 58.60, dieta = 14.0 (contains "senior"), desplazamiento = 20.0
+        // tarifaBase = 58.60, dieta = 14.0 (contains "senior"), desplazamiento = 26.60
         val total = TarifaCalculator.calcularTotal(partido, emptyList())
-        assertEquals(58.60 + 14.0 + 20.0, total, 0.001)
+        assertEquals(58.60 + 14.0 + 26.60, total, 0.001)
     }
 
     @Test
