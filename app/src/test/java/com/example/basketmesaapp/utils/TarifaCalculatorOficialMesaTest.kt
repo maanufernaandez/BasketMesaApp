@@ -77,9 +77,15 @@ class TarifaCalculatorOficialMesaTest {
     }
 
     @Test
-    fun `copa navarra con 3 oficiales devuelve 16_65`() {
+    fun `1a division devuelve 40`() {
+        val total = TarifaCalculator.calcularTotal(partidoOficial("1ª División Femenina", numeroOficiales = 2), emptyList())
+        assertEquals(40.0, total, 0.001)
+    }
+
+    @Test
+    fun `copa navarra con 3 oficiales devuelve 16_95`() {
         val total = TarifaCalculator.calcularTotal(partidoOficial("Copa Navarra Femenina", numeroOficiales = 3), emptyList())
-        assertEquals(16.65, total, 0.001)
+        assertEquals(16.95, total, 0.001)
     }
 
     @Test
@@ -89,60 +95,84 @@ class TarifaCalculatorOficialMesaTest {
     }
 
     @Test
-    fun `2a division femenina con varios oficiales devuelve 31_60`() {
+    fun `2a division femenina con varios oficiales devuelve 32`() {
         val total = TarifaCalculator.calcularTotal(partidoOficial("2ª División Femenina", numeroOficiales = 3), emptyList())
-        assertEquals(31.60, total, 0.001)
+        assertEquals(32.0, total, 0.001)
     }
 
     @Test
-    fun `2a division femenina en solitario sin autorizacion devuelve 47_40`() {
+    fun `2a division femenina en solitario sin autorizacion devuelve 64`() {
         val total = TarifaCalculator.calcularTotal(
             partidoOficial("2ª División Femenina", numeroOficiales = 1, autorizado3Vistas = false),
             emptyList()
         )
-        assertEquals(47.40, total, 0.001)
+        assertEquals(64.0, total, 0.001)
     }
 
     @Test
-    fun `2a division femenina en solitario con autorizacion devuelve el doble`() {
+    fun `2a division femenina en solitario con autorizacion tambien devuelve 64`() {
         val total = TarifaCalculator.calcularTotal(
             partidoOficial("2ª División Femenina", numeroOficiales = 1, autorizado3Vistas = true),
             emptyList()
         )
-        assertEquals(31.60 * 2, total, 0.001)
+        assertEquals(64.0, total, 0.001)
     }
 
     @Test
-    fun `2a division masculina en solitario sin autorizacion devuelve 37_50`() {
+    fun `2a division masculina en solitario sin autorizacion devuelve 51`() {
         val total = TarifaCalculator.calcularTotal(
             partidoOficial("2ª División Masculina", numeroOficiales = 1, autorizado3Vistas = false),
             emptyList()
         )
-        assertEquals(37.50, total, 0.001)
+        assertEquals(51.0, total, 0.001)
     }
 
     @Test
-    fun `2a division masculina en solitario con autorizacion devuelve el doble`() {
+    fun `2a division masculina en solitario con autorizacion tambien devuelve 51`() {
         val total = TarifaCalculator.calcularTotal(
             partidoOficial("2ª División Masculina", numeroOficiales = 1, autorizado3Vistas = true),
             emptyList()
         )
-        assertEquals(25.0 * 2, total, 0.001)
+        assertEquals(51.0, total, 0.001)
     }
 
     @Test
-    fun `senior 1a en solitario con autorizacion devuelve el doble`() {
+    fun `senior 1a en solitario con autorizacion devuelve 40_20`() {
         val total = TarifaCalculator.calcularTotal(
             partidoOficial("Senior Masculino 1ª", numeroOficiales = 1, autorizado3Vistas = true),
             emptyList()
         )
-        assertEquals(19.70 * 2, total, 0.001)
+        assertEquals(40.20, total, 0.001)
     }
 
     @Test
-    fun `senior 1a con varios oficiales devuelve 19_70`() {
+    fun `senior 1a en solitario sin autorizacion tambien devuelve 40_20`() {
+        val total = TarifaCalculator.calcularTotal(
+            partidoOficial("Senior Masculino 1ª", numeroOficiales = 1, autorizado3Vistas = false),
+            emptyList()
+        )
+        assertEquals(40.20, total, 0.001)
+    }
+
+    @Test
+    fun `senior 1a con varios oficiales devuelve 20_10`() {
         val total = TarifaCalculator.calcularTotal(partidoOficial("Senior Masculino 1ª", numeroOficiales = 3), emptyList())
-        assertEquals(19.70, total, 0.001)
+        assertEquals(20.10, total, 0.001)
+    }
+
+    @Test
+    fun `senior 2a en solitario devuelve 19_55 y no depende de la autorizacion`() {
+        val total = TarifaCalculator.calcularTotal(
+            partidoOficial("Senior Masculino 2ª", numeroOficiales = 1, autorizado3Vistas = false),
+            emptyList()
+        )
+        assertEquals(19.55, total, 0.001)
+    }
+
+    @Test
+    fun `senior 2a con varios oficiales devuelve 12_40`() {
+        val total = TarifaCalculator.calcularTotal(partidoOficial("Senior Masculino 2ª", numeroOficiales = 2), emptyList())
+        assertEquals(12.40, total, 0.001)
     }
 
     @Test
@@ -155,17 +185,56 @@ class TarifaCalculatorOficialMesaTest {
     }
 
     @Test
+    fun `junior 1a en solitario sin autorizacion devuelve 25_50`() {
+        val total = TarifaCalculator.calcularTotal(
+            partidoOficial("Junior Masculino 1ª", numeroOficiales = 1, autorizado3Vistas = false),
+            emptyList()
+        )
+        assertEquals(25.50, total, 0.001)
+    }
+
+    @Test
     fun `junior 1a con varios oficiales devuelve 17`() {
         val total = TarifaCalculator.calcularTotal(partidoOficial("Junior Masculino 1ª", numeroOficiales = 3), emptyList())
         assertEquals(17.0, total, 0.001)
     }
 
     @Test
-    fun `categoria no contemplada cae al fallback de configuracion`() {
-        val categorias = listOf(
-            com.example.basketmesaapp.model.CategoriaConfig("Torneo Veteranos", 13.35, 0.0)
+    fun `junior 2a en solitario devuelve 16_20 y no depende de la autorizacion`() {
+        val total = TarifaCalculator.calcularTotal(
+            partidoOficial("Junior Masculino 2ª", numeroOficiales = 1, autorizado3Vistas = false),
+            emptyList()
         )
-        val total = TarifaCalculator.calcularTotal(partidoOficial("Torneo Veteranos"), categorias)
-        assertEquals(13.35, total, 0.001)
+        assertEquals(16.20, total, 0.001)
+    }
+
+    @Test
+    fun `junior 2a con varios oficiales devuelve 11_45`() {
+        val total = TarifaCalculator.calcularTotal(partidoOficial("Junior Masculino 2ª", numeroOficiales = 2), emptyList())
+        assertEquals(11.45, total, 0.001)
+    }
+
+    @Test
+    fun `cadete 1a siempre devuelve 11_55`() {
+        val total = TarifaCalculator.calcularTotal(partidoOficial("Cadete Masculino 1ª", numeroOficiales = 1), emptyList())
+        assertEquals(11.55, total, 0.001)
+    }
+
+    @Test
+    fun `veteranos siempre devuelve 13_60`() {
+        val total = TarifaCalculator.calcularTotal(partidoOficial("Torneo Veteranos", numeroOficiales = 1), emptyList())
+        assertEquals(13.60, total, 0.001)
+    }
+
+    @Test
+    fun `categoria no contemplada cae al fallback de configuracion`() {
+        // "Exhibición Especial" no aparece en ninguna condición de
+        // TarifaDefinitions.OFICIAL_MESA, así que debe resolverse por la
+        // configuración de categorías (tercer nivel de fallback).
+        val categorias = listOf(
+            com.example.basketmesaapp.model.CategoriaConfig("Exhibición Especial", 9.0, 0.0)
+        )
+        val total = TarifaCalculator.calcularTotal(partidoOficial("Exhibición Especial"), categorias)
+        assertEquals(9.0, total, 0.001)
     }
 }

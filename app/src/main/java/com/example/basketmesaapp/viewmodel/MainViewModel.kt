@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import android.util.Log
 
 /**
  * Centraliza el acceso a Firestore y el estado de la pantalla principal.
@@ -66,13 +67,22 @@ class MainViewModel(
         // permisos...) las demás igualmente se intentan, y los calculadores
         // usarán sus tablas locales de fallback mientras tanto.
         viewModelScope.launch {
-            try { repository.sembrarReglasTarifaSiVacio() } catch (e: Exception) { /* fallback local */ }
+            try {
+                repository.sembrarReglasTarifaSiVacio()
+                Log.d("SiembraTarifas", "sembrarReglasTarifaSiVacio() terminó sin excepción")
+            } catch (e: Exception) {
+                Log.e("SiembraTarifas", "Fallo al sembrar tarifas, se usará el fallback local", e)
+            }
         }
         viewModelScope.launch {
-            try { repository.sembrarDesplazamientosSiVacio() } catch (e: Exception) { /* fallback local */ }
+            try { repository.sembrarDesplazamientosSiVacio() } catch (e: Exception) {
+                Log.e("SiembraTarifas", "Fallo al sembrar desplazamientos", e)
+            }
         }
         viewModelScope.launch {
-            try { repository.sembrarDietasSiVacio() } catch (e: Exception) { /* fallback local */ }
+            try { repository.sembrarDietasSiVacio() } catch (e: Exception) {
+                Log.e("SiembraTarifas", "Fallo al sembrar dietas", e)
+            }
         }
     }
 

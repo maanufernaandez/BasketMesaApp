@@ -16,7 +16,7 @@ class TarifaCalculatorReglasRemotasTest {
     fun `sin reglas remotas se usan las reglas locales exactamente como antes`() {
         val partido = Partido(categoriaId = "1ª División Femenina", rol = "Árbitro")
         val total = TarifaCalculator.calcularTotal(partido, emptyList())
-        assertEquals(91.0, total, 0.001)
+        assertEquals(94.0, total, 0.001)
     }
 
     @Test
@@ -39,8 +39,8 @@ class TarifaCalculatorReglasRemotasTest {
         )
         val partido = Partido(categoriaId = "1ª División Femenina", rol = "Árbitro")
         val total = TarifaCalculator.calcularTotal(partido, emptyList(), reglasRemotas)
-        // Debe usar la tabla local (91.0), no las remotas ni el fallback de config.
-        assertEquals(91.0, total, 0.001)
+        // Debe usar la tabla local (94.0), no las remotas ni el fallback de config.
+        assertEquals(94.0, total, 0.001)
     }
 
     @Test
@@ -61,8 +61,8 @@ class TarifaCalculatorReglasRemotasTest {
         )
         val partido = Partido(categoriaId = "1ª División Femenina", rol = "Árbitro")
         val total = TarifaCalculator.calcularTotal(partido, emptyList(), reglasRemotas)
-        // Cae a la tabla local de Árbitro (91.0), ignorando la regla remota de otro rol.
-        assertEquals(91.0, total, 0.001)
+        // Cae a la tabla local de Árbitro (94.0), ignorando la regla remota de otro rol.
+        assertEquals(94.0, total, 0.001)
     }
 
     @Test

@@ -23,7 +23,7 @@ class TarifaCalculatorIntegrationTest {
 
     @Test
     fun `total combina tarifa base dieta y desplazamiento`() {
-        // Árbitro de Senior 1ª en solitario (58.60) + dieta de senior (no aplica
+        // Árbitro de Senior 1ª en solitario (59.80) + dieta de senior (no aplica
         // a árbitros según la tabla, la dieta es independiente del rol) +
         // desplazamiento fijo por polideportivo conocido.
         val partido = Partido(
@@ -34,9 +34,9 @@ class TarifaCalculatorIntegrationTest {
             tipoDesplazamiento = "Conductor",
             polideportivo = "Pabellón de Tafalla"
         )
-        // tarifaBase = 58.60, dieta = 14.0 (contains "senior"), desplazamiento = 26.60
+        // tarifaBase = 59.80, dieta = 14.0 (contains "senior"), desplazamiento = 26.60
         val total = TarifaCalculator.calcularTotal(partido, emptyList())
-        assertEquals(58.60 + 14.0 + 26.60, total, 0.001)
+        assertEquals(59.80 + 14.0 + 26.60, total, 0.001)
     }
 
     @Test
