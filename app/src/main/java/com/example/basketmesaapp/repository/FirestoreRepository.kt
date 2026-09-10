@@ -1,9 +1,12 @@
 package com.example.basketmesaapp.repository
 
 import android.util.Log
+import com.example.basketmesaapp.model.DesplazamientoRemoto
+import com.example.basketmesaapp.model.DietaRemota
 import com.example.basketmesaapp.model.Partido
 import com.example.basketmesaapp.model.Sancion
 import com.example.basketmesaapp.model.TarifaReglaRemota
+import com.example.basketmesaapp.utils.DataConstants
 import com.example.basketmesaapp.utils.TarifaDefinitions
 import com.example.basketmesaapp.utils.toTarifaReglaRemota
 import com.google.firebase.auth.FirebaseAuth
@@ -13,9 +16,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
-import com.example.basketmesaapp.model.DesplazamientoRemoto
-import com.example.basketmesaapp.model.DietaRemota
-import com.example.basketmesaapp.utils.DataConstants
 
 class FirestoreRepository {
     private val db = FirebaseFirestore.getInstance()
@@ -24,6 +24,7 @@ class FirestoreRepository {
     private val partidosCollection = db.collection("partidos")
     private val sancionesCollection = db.collection("sanciones")
     private val tarifasReglasCollection = db.collection("tarifas_reglas")
+    private val metaCollection = db.collection("app_meta")
 
     private val desplazamientosCollection = db.collection("desplazamientos_reglas")
     private val dietasCollection = db.collection("dietas_reglas")
@@ -184,15 +185,26 @@ class FirestoreRepository {
     }
 
     suspend fun sembrarReglasTarifaSiVacio() {
-        val snapshot = tarifasReglasCollection.limit(1).get().await()
-        if (!snapshot.isEmpty) return
+        val versionDoc = metaCollection.document("tarifas_reglas_version").get().await()
+        val versionGuardada = versionDoc.getLong("version") ?: 0L
 
-        val batch = db.batch()
+        if (versionGuardada >= TarifaDefinitions.VERSION) return // ya está al día, no hace nada
+
+        // Hay una versión nueva: borra las reglas viejas antes de sembrar las nuevas.
+        val actuales = tarifasReglasCollection.get().await()
+        if (!actuales.isEmpty) {
+            val batchDelete = db.batch()
+            actuales.documents.forEach { batchDelete.delete(it.reference) }
+            batchDelete.commit().await()
+        }
+
+        val batchInsert = db.batch()
         reglasSemilla().forEach { regla ->
             val docId = UUID.randomUUID().toString()
-            batch.set(tarifasReglasCollection.document(docId), regla)
+            batchInsert.set(tarifasReglasCollection.document(docId), regla)
         }
-        batch.commit().await()
+        batchInsert.set(metaCollection.document("tarifas_reglas_version"), mapOf("version" to TarifaDefinitions.VERSION))
+        batchInsert.commit().await()
     }
 
     private fun reglasSemilla(): List<TarifaReglaRemota> =
