@@ -302,7 +302,8 @@ object DataConstants {
         "Copa Navarra Masculina" to listOf(
             Equipo("C.B Navasket S.K", listOf("Teresianas")),
             Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
-            Equipo("Valle de Egües", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
+            Equipo("Valle de Egües 3ª FEB", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted()),
+            Equipo("Valle de Egües 1ª DM", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
         )
     )
 
