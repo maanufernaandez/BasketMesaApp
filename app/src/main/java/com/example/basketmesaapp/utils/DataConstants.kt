@@ -46,7 +46,8 @@ object DataConstants {
             Equipo("Sparking Truth Maristas", emptyList()),
             Equipo("Unicaja Mijas", emptyList()),
             Equipo("Valencia Basket", emptyList())
-        ),
+        ).sortedBy { it.nombre },
+
         "Liga Eba" to listOf(
             Equipo("Baloncesto La Flecha", emptyList()),
             Equipo("Cantbasket04", emptyList()),
@@ -60,7 +61,8 @@ object DataConstants {
             Equipo("Teknei Bizkaia Zornotza", emptyList()),
             Equipo("Ulacia ZKE", emptyList()),
             Equipo("Valle de Egüés", listOf("Sarriguren"))
-        ),
+        ).sortedBy { it.nombre },
+
         "1ª Division Femenina" to listOf(
             Equipo("Aranguren Mutilbasket", listOf("Mutilva (Piscinas)")),
             Equipo("Araski", emptyList()),
@@ -76,7 +78,8 @@ object DataConstants {
             Equipo("San Ignacio", listOf("San Ignacio")),
             Equipo("Tabirako Baque", emptyList()),
             Equipo("Vascons Getxo", emptyList())
-        ),
+        ).sortedBy { it.nombre },
+
         "1ª Division Masculina" to listOf(
             Equipo("Aisla Armeti Ibaizabal", emptyList()),
             Equipo("Araberri Basket Club", emptyList()),
@@ -92,7 +95,8 @@ object DataConstants {
             Equipo("Urgatzi", emptyList()),
             Equipo("Valle de Egüés", listOf("Sarriguren")),
             Equipo("Vascons Getxo", emptyList())
-        ),
+        ).sortedBy { it.nombre },
+
         "2ª Division Femenina" to listOf(
             Equipo("Alkivent Toju", emptyList()),
             Equipo("Atletico San Sebastian", emptyList()),
@@ -110,7 +114,8 @@ object DataConstants {
             Equipo("Tabirako Baque", emptyList()),
             Equipo("Valle de Egüés", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted()),
             Equipo("Zornotza St Bilbao Basket", emptyList())
-        ),
+        ).sortedBy { it.nombre },
+
         "2ª Division Masculina" to listOf(
             Equipo("Anpri Gazte Berriak", listOf("Idaki (Ansoain)")),
             Equipo("Aranguren Mutilbasket", listOf("Irulegui")),
@@ -121,88 +126,98 @@ object DataConstants {
             Equipo("Larraona Claret", listOf("Larraona")),
             Equipo("Liceo Monjardín \"R\"", listOf("Liceo Monjardin")),
             Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
-            Equipo("San Ignacio", listOf("San Ignacio"))
-        ),
+            Equipo("Navarro Villoslada A", listOf("Ermitagaña", "Iribarren").sorted()),
+            Equipo("San Cernin", listOf("San Cernin")),
+            Equipo("San Ignacio-Nasabi", listOf("San Ignacio"))
+        ).sortedBy { it.nombre },
+
         "Senior Masculino 1ª" to listOf(
-            Equipo("Avia Zizur Ardoi", listOf("Municipal (Zizur)")),
-            Equipo("Cantolagua A", listOf("Municipal (Sangüesa)")),
+            Equipo("Berriozar MKE", listOf("Berriozar")),
+            Equipo("CB Noain", listOf("Municipal (Noain)")),
             Equipo("CBSA El Navarrico", listOf("Alfonso X El Sabio (San Adrián)")),
             Equipo("Cendea de Galar", listOf("Esquiroz")),
-            Equipo("Ega Perfil Oncineda", listOf("Lizarreria (Estella)")),
+            Equipo("IES Valle del Ebro", listOf("IES Valle del Ebro (Tudela)")),
             Equipo("Lagunak A", listOf("Lagunak (Piscinas)", "Municipal (Barañain)").sorted()),
             Equipo("Larraona Claret", listOf("Larraona")),
             Equipo("Liceo Monjardín \"B\"", listOf("Liceo Monjardin")),
+            Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
+            Equipo("Mendillorri Egües", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted()),
             Equipo("Muthiko Alaiak", listOf("Iribarren")),
-            Equipo("Navasket SM'Old", listOf("Teresianas")),
-            Equipo("Payvi Taberna", listOf("San Jorge")),
-            Equipo("San Cernin \"A\"", listOf("San Cernin")),
+            Equipo("Navasket SM'old", listOf("Teresianas")),
+            Equipo("Payvi Taberna Sanduzelai", listOf("San Jorge")),
             Equipo("San Ignacio", listOf("San Ignacio")),
-            Equipo("Valle de Egüés A", listOf("Olaz", "Sarriguren").sorted()),
-            Equipo("Valle del Ebro", listOf("IES Valle del Ebro (Tudela)"))
-        ),
+            Equipo("Txoribeltz Sanduzelai", listOf("San Jorge")),
+            Equipo("Valle de Egüés A", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
+        ).sortedBy { it.nombre },
+
         "Senior Femenino 1ª" to listOf(
-            Equipo("Avia Zizur Ardoi", listOf("Municipal (Zizur)")),
-            Equipo("Cantolagua", listOf("Municipal (Sangüesa)")),
-            Equipo("CB Noain A", listOf("Municipal (Noain)")),
-            Equipo("CBASK", listOf("Zelandi (Alsasua)")),
             Equipo("C.D. Universidad de Navarra", listOf("UNAV")),
+            Equipo("CB Noain A", listOf("Municipal (Noain)")),
+            Equipo("CB Oncineda SK", listOf("Lizarreria (Estella)")),
+            Equipo("Cantolagua", listOf("Municipal (Sangüesa)")),
+            Equipo("CDB Gares", listOf("Municipal (Puente la Reina)")),
             Equipo("Lagunak", listOf("Lagunak (Piscinas)", "Municipal (Barañain)").sorted()),
-            Equipo("Liceo Monjardín", listOf("Liceo Monjardin")),
+            Equipo("Larraona Claret", listOf("Larraona")),
+            Equipo("Liceo Monjardín", listOf("Liceo Monjardín")),
+            Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
             Equipo("Navarro Villoslada A", listOf("Ermitagaña", "Iribarren").sorted()),
             Equipo("Navasket SF'Old", listOf("Teresianas")),
+            Equipo("Payvi Taberna Sanduzelai", listOf("San Jorge")),
             Equipo("San Ignacio", listOf("San Ignacio")),
-            Equipo("Sanduzelai", listOf("San Jorge")),
-            Equipo("Valle de Egüés A", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted()),
-            Equipo("Valle de Egüés C", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
-        ),
+            Equipo("Valle de Egüés A", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
+        ).sortedBy { it.nombre },
+
         "Senior Masculino 2ª" to listOf(
             Equipo("AZK Alde Zaharreko Kluba", listOf("Buztintxuri", "Rochapea").sorted()),
+            Equipo("Ademar Maristas", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted()),
             Equipo("Berriozar MKE", listOf("Berriozar")),
-            Equipo("Burlada", listOf("Elizgibela")),
-            Equipo("CB Noain", listOf("AIT Sport Center (Torres de Elorz)", "Municipal (Noain)").sorted()),
+            Equipo("Burlada A", listOf("Elizgibela")),
+            Equipo("Burlada B", listOf("Elizgibela")),
+            Equipo("CB Oncineda SK", listOf("Lizarreria (Estella)")),
             Equipo("CBP Selco Electrónica", listOf("Municipal (Peralta)")),
             Equipo("CDB Gares", listOf("Municipal (Puente la Reina)")),
+            Equipo("Cantolagua", listOf("Municipal (Sangüesa)")),
             Equipo("Gazte Berriak", listOf("Idaki")),
-            Equipo("Grupo Rubio Gima Arenas", listOf("SDR Arenas (Tudela)")),
             Equipo("Lagunak B", listOf("Lagunak (Piscinas)")),
-            Equipo("Liceo Monjardín \"D\"", listOf("Liceo Monjardin")),
-            Equipo("Mendillorri Egüés B", listOf("Olaz", "Sarriguren", "Trinkete").sorted()),
+            Equipo("Larraona Claret", listOf("Larraona")),
+            Equipo("Navarro Villoslada B", listOf("IES Navarro Villoslada (Frontón)")),
             Equipo("Navasket SM'New", listOf("Rochapea", "Teresianas").sorted()),
             Equipo("Oberena", listOf("Oberena")),
-            Equipo("Sagrado Corazón", listOf("Sagrado Corazón")),
-            Equipo("San Cernin \"B\"", listOf("San Cernin")),
-            Equipo("Sanduzelai", listOf("San Jorge")),
-            Equipo("Valle de Egüés B", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted()),
+            Equipo("San Cernin", listOf("San Cernin")),
+            Equipo("Valle De Egüés B", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren", "Trinkete").sorted()),
             Equipo("Zona Media Tafalla", listOf("Velodromo (Tafalla)"))
-        ),
+        ).sortedBy { it.nombre },
+
         "Senior Femenino 2ª" to listOf(
-            Equipo("CDB Gares", listOf("Municipal (Puente la Reina)")),
-            Equipo("CD Noain B", listOf("AIT Sport Center (Torres de Elorz)", "Municipal (Noain)").sorted()),
+            Equipo("Aranguren Mutilbasket", listOf("Irulegui")),
+            Equipo("Burlada", listOf("Elizgibela")),
             Equipo("CBP Inregal", listOf("Municipal (Peralta)")),
+            Equipo("CD Noain", listOf("AIT Sport Center (Torres de Elorz)", "Municipal (Noain)").sorted()),
             Equipo("Gazte Berriak", listOf("Idaki")),
-            Equipo("Liceo Monjardín 'H'", listOf("Liceo Monjardin")),
-            Equipo("Megacalzado Ardoi", listOf("IES Zizur Mayor", "Municipal (Zizur)").sorted()),
+            Equipo("Inregal Ardoi", listOf("IES Zizur Mayor", "Municipal (Zizur)").sorted()),
+            Equipo("Liceo Monjardín 'H'", listOf("Liceo Monjardín")),
+            Equipo("Liceo Monjardín \"S\"", listOf("Liceo Monjardín")),
             Equipo("Mendillorri Egüés", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted()),
             Equipo("Navarro Villoslada B", listOf("Ermitagaña", "IES Navarro Villoslada (Frontón)", "Iribarren").sorted()),
             Equipo("Navarro Villoslada C", listOf("Ermitagaña", "IES Navarro Villoslada (Frontón)", "Iribarren").sorted()),
             Equipo("Navasket SF'New", listOf("Teresianas")),
-            Equipo("Sagrado Corazon", listOf("Sagrado Corazon")),
-            Equipo("San Cernin \"A\"", listOf("San Cernin")),
-            Equipo("UD Beriain FB", listOf("Municipal (Beriain)"))
-        ),
+            Equipo("Navasket SF'Y78", listOf("Rochapea", "Teresianas").sorted()),
+            Equipo("Sagrado Corazon", listOf("Sagrado Corazon"))
+        ).sortedBy { it.nombre },
+
         "Junior Masculino 1ª" to listOf(
             Equipo("Anaquel IES Valle del Ebro", listOf("IES Valle del Ebro (Tudela)")),
             Equipo("Aranguren Mutilbasket A", listOf("Irulegui")),
-            Equipo("CBP Inregal", listOf("Municipal (Peralta)")),
+            Equipo("Arenas", listOf("SDR Arenas (Tudela)")),
             Equipo("Gazte Berriak", listOf("Idaki")),
-            Equipo("Gima Grupo Rubio Arenas", listOf("SDR Arenas (Tudela)")),
             Equipo("Larraona Claret", listOf("Larraona")),
-            Equipo("Liceo Monjardín \"O\"", listOf("Liceo Monjardin")),
             Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
             Equipo("Navarro Villoslada A", listOf("Ermitagaña", "Iribarren").sorted()),
-            Equipo("San Ignacio", listOf("San Ignacio")),
-            Equipo("Valle de Egüés A", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
-        ),
+            Equipo("San Cernin", listOf("San Cernin")),
+            Equipo("San Ignacio Liceo Monjardín \"A\"", listOf("Liceo Monjardin")),
+            Equipo("Valle de Egüés Ibasaga", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
+        ).sortedBy { it.nombre },
+
         "Junior Femenino 1ª" to listOf(
             Equipo("ALZ Motors Mutilbasket A", listOf("Irulegui")),
             Equipo("EGA Perfil Oncineda", listOf("Lizarreria (Estella)")),
@@ -212,7 +227,8 @@ object DataConstants {
             Equipo("Navarro Villoslada A", listOf("Ermitagaña", "Iribarren").sorted()),
             Equipo("Navasket JF'Old", listOf("Teresianas")),
             Equipo("Valle de Egüés A", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
-        ),
+        ).sortedBy { it.nombre },
+
         "Junior Masculino 2ª" to listOf(
             Equipo("Aranguren Mutilbasket B", listOf("Irulegui")),
             Equipo("Avia Zizur Ardoi", listOf("IES Zizur Mayor", "Municipal (Zizur)").sorted()),
@@ -221,8 +237,8 @@ object DataConstants {
             Equipo("Biurdana Navasket JM'Old", listOf("Rochapea", "Teresianas").sorted()),
             Equipo("Burlada", listOf("Elizgibela")),
             Equipo("CBASK", listOf("Zelandi (Alsasua)")),
-            Equipo("Cantolagua", listOf("Municipal (Sangüesa)")),
             Equipo("CDB Gares", listOf("Municipal (Puente la Reina)")),
+            Equipo("Cantolagua", listOf("Municipal (Sangüesa)")),
             Equipo("EGA Perfil Oncineda", listOf("Lizarreria (Estella)")),
             Equipo("Lagunak", listOf("Lagunak (Piscinas)", "Municipal (Barañain)").sorted()),
             Equipo("Larraona Claret", listOf("Larraona")),
@@ -230,7 +246,8 @@ object DataConstants {
             Equipo("Navarro Villoslada B", listOf("Ermitagaña", "IES Navarro Villoslada (Frontón)", "Iribarren").sorted()),
             Equipo("Valle de Egüés", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted()),
             Equipo("Zona Media Tafalla", listOf("Velodromo (Tafalla)"))
-        ),
+        ).sortedBy { it.nombre },
+
         "Junior Femenino 2ª" to listOf(
             Equipo("ADI Burlada", listOf("Elizgibela")),
             Equipo("Ademar Nike", listOf("Maristas")),
@@ -255,23 +272,33 @@ object DataConstants {
             Equipo("San Cernin \"A\"", listOf("San Cernin")),
             Equipo("San Ignacio", listOf("San Ignacio")),
             Equipo("Valle de Egües B", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
-        ),
+        ).sortedBy { it.nombre },
+
         "Cadete Masculino 1ª" to listOf(
-            Equipo("Ademar Apolo", listOf("Maristas")),
-            Equipo("Aranguren Mutilbasket A", listOf("Irulegui")),
-            Equipo("Gazte Berriak", listOf("Idaki")),
-            Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
-            Equipo("Navarro Villoslada A", listOf("Ermitagaña", "Iribarren").sorted()),
-            Equipo("San Cernin \"A\"", listOf("San Cernin"))
-        ),
+            Equipo("Ademar Hermes", listOf("Larrabide", "Maristas", "Olaz", "Salesianos", "Sarriguren").sorted()),
+            Equipo("Aranguren Mutilbasket A", listOf("Irulegui", "Larrabide").sorted()),
+            Equipo("Arenas", listOf("Larrabide", "SDR Arenas (Tudela)").sorted()),
+            Equipo("Gazte Berriak", listOf("Idaki", "Larrabide").sorted()),
+            Equipo("IES Valle del Ebro", listOf("IES Valle del Ebro (Tudela)", "Larrabide").sorted()),
+            Equipo("Liceo Monjardín", listOf("Larrabide", "Liceo Monjardín").sorted()),
+            Equipo("Megacalzado Ardoi", listOf("IES Zizur Mayor", "Larrabide", "Municipal (Zizur)").sorted()),
+            Equipo("San Ignacio", listOf("Larrabide", "San Ignacio").sorted()),
+            Equipo("Valle de Egües Sarriguren", listOf("Larrabide", "Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
+        ).sortedBy { it.nombre },
+
         "Cadete Femenino 1ª" to listOf(
-            Equipo("Ademar Apolo", listOf("Maristas")),
-            Equipo("Aranguren Mutilbasket A", listOf("Irulegui")),
-            Equipo("Gazte Berriak", listOf("Idaki")),
-            Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
-            Equipo("Navarro Villoslada A", listOf("Ermitagaña", "Iribarren").sorted()),
-            Equipo("San Cernin \"A\"", listOf("San Cernin"))
-        ),
+            Equipo("Aranguren Mutilbasket A", listOf("Irulegui", "Larrabide").sorted()),
+            Equipo("Aranguren Mutilbasket B", listOf("Irulegui", "Larrabide").sorted()),
+            Equipo("Gazte Berriak", listOf("Idaki", "Larrabide").sorted()),
+            Equipo("Liceo Monjardín", listOf("Larrabide", "Liceo Monjardín").sorted()),
+            Equipo("Megacalzado Ardoi", listOf("Larrabide", "Municipal (Zizur)").sorted()),
+            Equipo("Navarro Villoslada A", listOf("Ermitagaña", "Iribarren", "Larrabide").sorted()),
+            Equipo("Navasket CF'old", listOf("Larrabide", "Teresianas").sorted()),
+            Equipo("San Cernin \"A\"", listOf("Larrabide", "San Cernin").sorted()),
+            Equipo("San Ignacio", listOf("Larrabide", "San Ignacio").sorted()),
+            Equipo("Valle de Egües Eransus", listOf("Larrabide", "Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
+        ).sortedBy { it.nombre },
+
         "Torneo Veteranos" to listOf(
             Equipo("Ademar Apolo", listOf("Maristas")),
             Equipo("Aranguren Mutilbasket A", listOf("Irulegui")),
@@ -279,7 +306,8 @@ object DataConstants {
             Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
             Equipo("Navarro Villoslada A", listOf("Ermitagaña", "Iribarren").sorted()),
             Equipo("San Cernin \"A\"", listOf("San Cernin"))
-        ),
+        ).sortedBy { it.nombre },
+
         "Torneo Veteranas" to listOf(
             Equipo("Ademar Apolo", listOf("Maristas")),
             Equipo("Aranguren Mutilbasket A", listOf("Irulegui")),
@@ -287,7 +315,8 @@ object DataConstants {
             Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
             Equipo("Navarro Villoslada A", listOf("Ermitagaña", "Iribarren").sorted()),
             Equipo("San Cernin \"A\"", listOf("San Cernin"))
-        ),
+        ).sortedBy { it.nombre },
+
         "Copa Navarra Femenina" to listOf(
             Equipo("Aranguren Mutilbasket", listOf("Aranguren (Piscinas)", "Irulegui").sorted()),
             Equipo("C.B Navasket S.K", listOf("Teresianas")),
@@ -298,13 +327,14 @@ object DataConstants {
             Equipo("Navarro Villoslada", listOf("Ermitagaña", "Iribarren").sorted()),
             Equipo("San Ignacio Premo", listOf("San Ignacio")),
             Equipo("Valle de Egües", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
-        ),
+        ).sortedBy { it.nombre },
+
         "Copa Navarra Masculina" to listOf(
             Equipo("C.B Navasket S.K", listOf("Teresianas")),
             Equipo("Megacalzado Ardoi", listOf("Municipal (Zizur)")),
-            Equipo("Valle de Egües 3ª FEB", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted()),
-            Equipo("Valle de Egües 1ª DM", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
-        )
+            Equipo("Valle de Egües 1ª DM", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted()),
+            Equipo("Valle de Egües 3ª FEB", listOf("Maristas", "Olaz", "Salesianos", "Sarriguren").sorted())
+        ).sortedBy { it.nombre }
     )
 
     val festivosTemporada = listOf(
