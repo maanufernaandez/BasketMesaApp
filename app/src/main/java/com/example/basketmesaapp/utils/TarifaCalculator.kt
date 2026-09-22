@@ -6,21 +6,6 @@ import com.example.basketmesaapp.model.TarifaReglaRemota
 import com.example.basketmesaapp.model.DesplazamientoRemoto
 import com.example.basketmesaapp.model.DietaRemota
 
-/**
- * Orquesta el cálculo del importe total de un partido.
- *
- * Prioridad de resolución de la tarifa base:
- *  1. [reglasRemotas] cargadas desde Firestore (colección `tarifas_reglas`),
- *     si hay alguna que coincida con la categoría del partido.
- *  2. Tablas locales [TarifaRulesArbitro] / [TarifaRulesOficialMesa], como
- *     fallback si Firestore aún no tiene datos, la lectura falla, o no hay
- *     conexión.
- *  3. [CategoriaConfig] cargada aparte, como último recurso (igual que en
- *     la versión anterior de este calculador).
- *
- * Este diseño permite editar tarifas sin publicar una nueva versión de la
- * app, sin arriesgar que la app se rompa si Firestore no responde.
- */
 object TarifaCalculator {
 
     fun calcularTotal(
@@ -30,18 +15,28 @@ object TarifaCalculator {
         reglasDesplazamiento: List<DesplazamientoRemoto> = emptyList(),
         reglasDietas: List<DietaRemota> = emptyList()
     ): Double {
-        // Los amistosos ignoran cualquier regla y usan los valores manuales.
+        // Los amistosos ignoran cualquier regla y usan los valores manuales
+        // tanto para la tarifa como para el desplazamiento.
         if (partido.isAmistoso) {
             return partido.tarifaManual + partido.plusDesplazamiento
         }
 
         val categoriaNormalizada = partido.categoriaId.normalizeCategory()
         val esArbitro = partido.rol == "Árbitro"
-        val reglasLocales = if (esArbitro) TarifaRulesArbitro.reglas else TarifaRulesOficialMesa.reglas
 
-        val tarifaBase = TarifaReglaRemotaEvaluator.aplicar(reglasRemotas, categoriaNormalizada, partido, partido.rol)
-            ?: TarifaReglaRemotaEvaluator.aplicar(reglasLocales, categoriaNormalizada, partido, partido.rol)
-            ?: buscarTarifaEnConfig(categoriaNormalizada, categorias)
+        // Selección Navarra usa una tarifa manual (varía según la convocatoria),
+        // pero la dieta y el desplazamiento se siguen calculando de forma
+        // automática igual que en cualquier otra categoría.
+        val esSeleccionNavarra = partido.categoriaId.startsWith("Selección Navarra", ignoreCase = true)
+
+        val tarifaBase = if (esSeleccionNavarra) {
+            partido.tarifaManual
+        } else {
+            val reglasLocales = if (esArbitro) TarifaRulesArbitro.reglas else TarifaRulesOficialMesa.reglas
+            TarifaReglaRemotaEvaluator.aplicar(reglasRemotas, categoriaNormalizada, partido, partido.rol)
+                ?: TarifaReglaRemotaEvaluator.aplicar(reglasLocales, categoriaNormalizada, partido, partido.rol)
+                ?: buscarTarifaEnConfig(categoriaNormalizada, categorias)
+        }
 
         val dieta = DietaCalculator.calcular(categoriaNormalizada, partido.cobraDieta, reglasDietas)
         val desplazamiento = DesplazamientoCalculator.calcular(partido, reglasDesplazamiento)

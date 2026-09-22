@@ -64,7 +64,8 @@ fun AddPartidoDialog(
     val pasoInicial = when (campoAEditar) {
         "Fecha" -> 1
         "Hora" -> 2
-        "Oficiales", "Árbitros" -> if (partidoAEditar?.isAmistoso == true) 100 else 7
+        "Oficiales", "Árbitros" -> 7
+        "Tarifa" -> 101
         null -> 1
         else -> if (partidoAEditar?.isAmistoso == true) 100 else 1
     }
@@ -423,6 +424,31 @@ fun AddPartidoDialog(
             }
         }
 
+        101 -> {
+            BaseStepDialog(
+                title = "Tarifa",
+                onDismiss = onDismiss,
+                onBack = null,
+                onNext = {
+                    val p = (partidoAEditar ?: Partido()).copy(
+                        tarifaManual = tarifaManual.replace(",", ".").toDoubleOrNull() ?: 0.0
+                    )
+                    onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
+                    onDismiss()
+                },
+                nextEnabled = tarifaManual.isNotBlank(),
+                nextText = "Guardar"
+            ) {
+                OutlinedTextField(
+                    value = tarifaManual,
+                    onValueChange = { tarifaManual = it.replace(Regex("[^0-9.,]"), "") },
+                    label = { Text("Tarifa del partido (€)") }, modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    shape = RoundedCornerShape(12.dp)
+                )
+            }
+        }
+
         31 -> {
             val subcats = listOf(
                 "Junior Masculino", "Junior Femenino", "Cadete Masculino", "Cadete Femenino",
@@ -457,7 +483,7 @@ fun AddPartidoDialog(
             BaseStepDialog(title = "Polideportivo", onDismiss = onDismiss, onBack = { step = 31 }) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     TextButton(
-                        onClick = { polideportivo = "Larrabide"; step = 8 },
+                        onClick = { polideportivo = "Larrabide"; step = 34 },
                         modifier = Modifier.fillMaxWidth()
                     ) { Text("Larrabide", fontSize = 18.sp, fontWeight = FontWeight.Bold) }
                     HorizontalDivider()
@@ -473,7 +499,7 @@ fun AddPartidoDialog(
                 title = "Escribe el Polideportivo",
                 onDismiss = onDismiss,
                 onBack = { step = 32 },
-                onNext = { step = 8 },
+                onNext = { step = 34 },
                 nextEnabled = polideportivo.isNotBlank()
             ) {
                 OutlinedTextField(
@@ -485,10 +511,37 @@ fun AddPartidoDialog(
                 )
             }
         }
+        34 -> {
+            BaseStepDialog(
+                title = "Tarifa",
+                onDismiss = onDismiss,
+                onBack = { step = if (polideportivo == "Larrabide") 32 else 33 },
+                onNext = {
+                    if (campoAEditar != null) {
+                        val p = (partidoAEditar ?: Partido()).copy(
+                            tarifaManual = tarifaManual.replace(",", ".").toDoubleOrNull() ?: 0.0
+                        )
+                        onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
+                        onDismiss()
+                    } else step = 8
+                },
+                nextEnabled = tarifaManual.replace(",", ".").toDoubleOrNull() != null,
+                nextText = if (campoAEditar != null) "Guardar" else "Siguiente"
+            ) {
+                OutlinedTextField(
+                    value = tarifaManual,
+                    onValueChange = { tarifaManual = it.replace(Regex("[^0-9.,]"), "") },
+                    label = { Text("Tarifa del partido (€)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    shape = RoundedCornerShape(12.dp)
+                )
+            }
+        }
         4 -> {
             val listState = rememberLazyListState()
             val availablePolis = teamsInCategory.flatMap { it.polideportivos }.distinct().sorted()
-            val displayPolis = availablePolis + "Otro"
+            val displayPolis = listOf("Otro") + availablePolis
             BaseStepDialog(title = "Polideportivo", onDismiss = onDismiss, onBack = { step = 3 }, onNext = null) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     LazyColumn(
@@ -525,7 +578,7 @@ fun AddPartidoDialog(
         }
         45 -> {
             BaseStepDialog(
-                title = "Polideportivo",
+                title = "Escribe el Polideportivo",
                 onDismiss = onDismiss,
                 onBack = { step = 4 },
                 onNext = { step = 5 },
@@ -720,8 +773,7 @@ fun AddPartidoDialog(
                 title = "Extras",
                 onDismiss = onDismiss,
                 onBack = {
-                    step = if (categoriaId.contains("Selección Navarra"))
-                        (if (polideportivo == "Larrabide") 32 else 33)
+                    step = if (categoriaId.contains("Selección Navarra")) 34
                     else if (requiresOfficialSelection) 7 else 6
                 },
                 onNext = {
@@ -799,8 +851,7 @@ fun AddPartidoDialog(
                 onDismiss = onDismiss,
                 onBack = {
                     step = if (isAmistoso) 100
-                    else if (categoriaId.contains("Selección Navarra"))
-                        (if (polideportivo == "Larrabide") 32 else 33)
+                    else if (categoriaId.contains("Selección Navarra")) 34
                     else if (seSaltoPaso8) (if (requiresOfficialSelection) 7 else 6) else 8
                 },
                 onNext = {
@@ -815,8 +866,9 @@ fun AddPartidoDialog(
                         rol = userRol,
                         autorizado3Vistas = if (isAmistoso) false else autorizado3Vistas,
                         isAmistoso = isAmistoso,
-                        tarifaManual = if (isAmistoso) tarifaManual.replace(",", ".").toDoubleOrNull() ?: 0.0 else 0.0
-                    )
+                        tarifaManual = if (isAmistoso || categoriaId.startsWith("Selección Navarra", ignoreCase = true))
+                            tarifaManual.replace(",", ".").toDoubleOrNull() ?: 0.0
+                        else 0.0                    )
                     val partidoFinal = if (partidoAEditar != null)
                         partidoGenerado.copy(id = partidoAEditar.id)
                     else partidoGenerado

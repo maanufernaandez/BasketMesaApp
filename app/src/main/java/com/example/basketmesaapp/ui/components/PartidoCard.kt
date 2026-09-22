@@ -1,8 +1,10 @@
 package com.example.basketmesaapp.ui.components
 
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -95,7 +97,11 @@ fun PartidoCard(partido: Partido, onEdit: (Partido, String?) -> Unit, onDelete: 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 val labelDinamico = if (partido.rol == "Árbitro") "Árbitros" else "Oficiales"
-                val opciones = listOf("Fecha", "Hora", labelDinamico)
+                val opciones = if (partido.isAmistoso || esSeleccion) {
+                    listOf("Fecha", "Hora", labelDinamico, "Tarifa")
+                } else {
+                    listOf("Fecha", "Hora", labelDinamico)
+                }
 
                 opciones.forEach { opcion ->
                     TextButton(
@@ -186,15 +192,66 @@ fun PartidoCard(partido: Partido, onEdit: (Partido, String?) -> Unit, onDelete: 
                 )
             }
 
-            Text(
-                text = textoEquiposPpal,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(bottom = 12.dp),
-                maxLines = 1,
-                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-            )
+            // Bloque de altura fija: así todas las tarjetas ocupan lo mismo,
+            // tenga el partido nombres de equipo cortos o largos.
+            // Importante: cada Text fija su propio lineHeight (no solo el
+            // fontSize), porque si no, Compose usa el lineHeight del tema
+            // (24sp) y 3 líneas no caben en un Box de altura fija.
+            Box(
+                modifier = Modifier.fillMaxWidth().height(72.dp).padding(bottom = 12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                if (esSeleccion) {
+                    Text(
+                        text = textoEquiposPpal,
+                        fontSize = 18.sp,
+                        lineHeight = 20.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center,
+                        maxLines = 2,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    )
+                } else {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(2.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = partido.equipoLocal,
+                            fontSize = 16.sp,
+                            lineHeight = 18.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Text(
+                            text = "vs",
+                            fontSize = 12.sp,
+                            lineHeight = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Text(
+                            text = partido.equipoVisitante,
+                            fontSize = 16.sp,
+                            lineHeight = 18.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            }
 
             HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant, thickness = 1.dp)
             Spacer(modifier = Modifier.height(12.dp))
