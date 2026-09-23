@@ -697,7 +697,11 @@ fun AddPartidoDialog(
                     catLower.contains("copanavarra") -> listOf(2, 3)
                     catLower.contains("cadete") -> listOf(1)
                     else -> {
-                        if (autorizado3Vistas) {
+                        val esSegundaFlexible = (catLower.contains("senior") && catLower.contains("2ª")) ||
+                                (catLower.contains("junior") && catLower.contains("2ª"))
+                        if (esSegundaFlexible) {
+                            listOf(1, 2)
+                        } else if (autorizado3Vistas) {
                             listOf(1, 2)
                         } else {
                             val permiteUno = catLower.contains("2ªdivisionfemenin") ||
