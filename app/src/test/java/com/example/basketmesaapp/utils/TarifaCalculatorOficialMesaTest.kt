@@ -22,32 +22,42 @@ class TarifaCalculatorOficialMesaTest {
         autorizado3Vistas = autorizado3Vistas
     )
 
+    // Selección Navarra (cualquier subcategoría, cualquier rol) usa tarifa
+    // manual desde que se añadió el paso de "Tarifa" al flujo de creación;
+    // ya no tiene tarifas fijas automáticas por subcategoría.
+
     @Test
-    fun `seleccion navarra junior devuelve 25`() {
-        val total = TarifaCalculator.calcularTotal(partidoOficial("Selección Navarra Junior"), emptyList())
+    fun `seleccion navarra junior usa la tarifa manual`() {
+        val partido = partidoOficial("Selección Navarra Junior").copy(tarifaManual = 25.0)
+        val total = TarifaCalculator.calcularTotal(partido, emptyList())
         assertEquals(25.0, total, 0.001)
     }
 
     @Test
-    fun `seleccion navarra cadete devuelve 17_60`() {
-        val total = TarifaCalculator.calcularTotal(partidoOficial("Selección Navarra Cadete"), emptyList())
+    fun `seleccion navarra cadete usa la tarifa manual`() {
+        val partido = partidoOficial("Selección Navarra Cadete").copy(tarifaManual = 17.60)
+        val total = TarifaCalculator.calcularTotal(partido, emptyList())
         assertEquals(17.60, total, 0.001)
     }
 
     @Test
-    fun `seleccion navarra infantil devuelve 17_60`() {
-        val total = TarifaCalculator.calcularTotal(partidoOficial("Selección Navarra Infantil"), emptyList())
+    fun `seleccion navarra infantil usa la tarifa manual`() {
+        val partido = partidoOficial("Selección Navarra Infantil").copy(tarifaManual = 17.60)
+        val total = TarifaCalculator.calcularTotal(partido, emptyList())
         assertEquals(17.60, total, 0.001)
     }
 
     @Test
-    fun `seleccion navarra mini devuelve 13_40`() {
-        val total = TarifaCalculator.calcularTotal(partidoOficial("Selección Navarra Mini"), emptyList())
+    fun `seleccion navarra mini usa la tarifa manual`() {
+        val partido = partidoOficial("Selección Navarra Mini").copy(tarifaManual = 13.40)
+        val total = TarifaCalculator.calcularTotal(partido, emptyList())
         assertEquals(13.40, total, 0.001)
     }
 
     @Test
-    fun `seleccion navarra sin subcategoria conocida devuelve 0`() {
+    fun `seleccion navarra sin tarifa manual informada devuelve 0`() {
+        // Si no se ha escrito ninguna tarifa (tarifaManual por defecto = 0.0),
+        // el total es 0, tenga o no una subcategoría reconocida.
         val total = TarifaCalculator.calcularTotal(partidoOficial("Selección Navarra Absoluta"), emptyList())
         assertEquals(0.0, total, 0.001)
     }

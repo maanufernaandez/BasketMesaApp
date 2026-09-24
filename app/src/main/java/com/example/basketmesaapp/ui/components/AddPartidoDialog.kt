@@ -1,6 +1,7 @@
 package com.example.basketmesaapp.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.runtime.MutableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import com.example.basketmesaapp.model.CategoriaConfig
 import com.example.basketmesaapp.model.Partido
 import com.example.basketmesaapp.utils.DataConstants
+import com.example.basketmesaapp.utils.HorarioValidator
 import com.example.basketmesaapp.utils.TarifaCalculator
 import com.example.basketmesaapp.utils.fadingEdge
 import com.example.basketmesaapp.utils.normalizeCategory
@@ -70,82 +72,47 @@ fun AddPartidoDialog(
         else -> if (partidoAEditar?.isAmistoso == true) 100 else 1
     }
 
-    var step by remember(partidoAEditar) { mutableIntStateOf(pasoInicial) }
+    val stepState = remember(partidoAEditar) { mutableIntStateOf(pasoInicial) }
+    var step by stepState
     var fecha by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.fecha ?: "") }
     var hora by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.hora ?: "16:00") }
-    var categoriaId by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.categoriaId ?: "") }
-    var polideportivo by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.polideportivo ?: "") }
-    var local by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoLocal ?: "") }
-    var visitante by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoVisitante ?: "") }
-    var numOficiales by remember(partidoAEditar) { mutableIntStateOf(partidoAEditar?.numeroOficiales ?: 2) }
+    val categoriaIdState = remember(partidoAEditar) { mutableStateOf(partidoAEditar?.categoriaId ?: "") }
+    var categoriaId by categoriaIdState
+    val polideportivoState = remember(partidoAEditar) { mutableStateOf(partidoAEditar?.polideportivo ?: "") }
+    var polideportivo by polideportivoState
+    val localState = remember(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoLocal ?: "") }
+    var local by localState
+    val visitanteState = remember(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoVisitante ?: "") }
+    var visitante by visitanteState
+    val numOficialesState = remember(partidoAEditar) { mutableIntStateOf(partidoAEditar?.numeroOficiales ?: 2) }
+    var numOficiales by numOficialesState
     var cobraDieta by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.cobraDieta ?: false) }
     var tipoDesplazamiento by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.tipoDesplazamiento ?: "Ninguno") }
 
-    // Convertido a VAR para poder editarlo en Amistosos
-    var plusDesplazamiento by remember(partidoAEditar) {
+    val plusDesplazamientoState = remember(partidoAEditar) {
         mutableStateOf(
             if (partidoAEditar != null && partidoAEditar.plusDesplazamiento > 0.0)
                 partidoAEditar.plusDesplazamiento.toString()
             else ""
         )
     }
+    var plusDesplazamiento by plusDesplazamientoState
 
     var invertirLocalia by remember(partidoAEditar) { mutableStateOf(false) }
 
     // NUEVAS VARIABLES ESTADO PARA AMISTOSOS
     var isAmistoso by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.isAmistoso ?: false) }
-    var tarifaManual by remember(partidoAEditar) {
+    val tarifaManualState = remember(partidoAEditar) {
         mutableStateOf(if (partidoAEditar != null && partidoAEditar.tarifaManual > 0.0) partidoAEditar.tarifaManual.toString() else "")
     }
-    var tieneDesplazamiento by remember(partidoAEditar) {
+    var tarifaManual by tarifaManualState
+    val tieneDesplazamientoState = remember(partidoAEditar) {
         mutableStateOf(partidoAEditar != null && partidoAEditar.plusDesplazamiento > 0.0)
     }
-
-    fun verificarFueraDeHorario(catId: String, fechaStr: String, horaStr: String): Boolean {
-        if (fechaStr.isEmpty() || horaStr.isEmpty() || !horaStr.contains(":")) return false
-        val base = catId.lowercase()
-        if (base.contains("seleccion")) return false
-
-        val isSenior = base.contains("senior") || base.contains("2ª division mas") || base.contains("2ª división mas")
-        val isJunior = base.contains("junior")
-        val isCadete = base.contains("cadete")
-
-        if (!isSenior && !isJunior && !isCadete) return false
-
-        val parts = horaStr.split(":")
-        val horaNum = parts[0].toIntOrNull() ?: return false
-        val minNum = parts[1].toIntOrNull() ?: return false
-        val mins = horaNum * 60 + minNum
-
-        val cal = java.util.Calendar.getInstance().apply {
-            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
-            time = sdf.parse(fechaStr) ?: return false
-        }
-        val dayOfWeek = cal.get(java.util.Calendar.DAY_OF_WEEK)
-        val esFestivo = DataConstants.festivosTemporada.contains(fechaStr)
-
-        return when {
-            dayOfWeek == java.util.Calendar.SUNDAY || esFestivo -> {
-                when {
-                    isSenior || isJunior -> mins < 10 * 60 || (mins >= 12 * 60 + 30 && mins < 16 * 60) || mins > 18 * 60
-                    isCadete -> mins < 10 * 60 || mins > 12 * 60 + 30
-                    else -> false
-                }
-            }
-            dayOfWeek == java.util.Calendar.SATURDAY -> {
-                when {
-                    isSenior -> mins < 16 * 60 || mins > 20 * 60 + 30
-                    isJunior -> mins < 10 * 60 || (mins >= 13 * 60 && mins < 16 * 60) || mins > 20 * 60 + 30
-                    isCadete -> mins < 9 * 60 || (mins >= 13 * 60 + 20 && mins < 16 * 60) || mins > 20 * 60 + 30
-                    else -> false
-                }
-            }
-            else -> mins < 18 * 60 || mins >= 20 * 60 + 30
-        }
-    }
+    var tieneDesplazamiento by tieneDesplazamientoState
 
     LaunchedEffect(fecha, hora, categoriaId) {
-        cobraDieta = verificarFueraDeHorario(categoriaId, fecha, hora)
+        cobraDieta = HorarioValidator.esFueraDeHorario(categoriaId, fecha, hora)
     }
 
     val teamsInCategory = remember(categoriaId) {
@@ -344,84 +311,22 @@ fun AddPartidoDialog(
             }
         }
 
-        // PASO 100: FORMULARIO EXCLUSIVO AMISTOSOS (MANUAL)
         100 -> {
-            val listState = rememberLazyListState()
-            BaseStepDialog(
-                title = "Datos del Amistoso",
-                onDismiss = onDismiss,
-                onBack = { step = 3 },
-                onNext = {
-                    if (campoAEditar != null) {
-                        val p = (partidoAEditar ?: Partido()).copy(
-                            categoriaId = categoriaId, equipoLocal = local, equipoVisitante = visitante,
-                            polideportivo = polideportivo, isAmistoso = true,
-                            tarifaManual = tarifaManual.replace(",", ".").toDoubleOrNull() ?: 0.0,
-                            plusDesplazamiento = if (tieneDesplazamiento) plusDesplazamiento.replace(",", ".").toDoubleOrNull() ?: 0.0 else 0.0
-                        )
-                        onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
-                        onDismiss()
-                    } else step = 9
-                },
-                nextEnabled = categoriaId.isNotBlank() && local.isNotBlank() && visitante.isNotBlank() && polideportivo.isNotBlank() && tarifaManual.isNotBlank(),
-                nextText = if (campoAEditar != null) "Guardar" else "Siguiente"
-            ) {
-                LazyColumn(
-                    state = listState,
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(vertical = 16.dp),
-                    modifier = Modifier.fillMaxWidth().fadingEdge(listState)
-                ) {
-                    item {
-                        OutlinedTextField(
-                            value = categoriaId, onValueChange = { categoriaId = it },
-                            label = { Text("Categoría (Ej: Amistoso Cadete)") }, modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = local, onValueChange = { local = it },
-                            label = { Text("Equipo Local") }, modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = visitante, onValueChange = { visitante = it },
-                            label = { Text("Equipo Visitante") }, modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = polideportivo, onValueChange = { polideportivo = it },
-                            label = { Text("Polideportivo") }, modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = tarifaManual,
-                            onValueChange = { tarifaManual = it.replace(Regex("[^0-9.,]"), "") },
-                            label = { Text("Tarifa del partido (€)") }, modifier = Modifier.fillMaxWidth(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                        Spacer(Modifier.height(16.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().clickable { tieneDesplazamiento = !tieneDesplazamiento }) {
-                            Checkbox(checked = tieneDesplazamiento, onCheckedChange = { tieneDesplazamiento = it })
-                            Text("¿Tiene desplazamiento?", fontWeight = FontWeight.Bold)
-                        }
-                        if (tieneDesplazamiento) {
-                            Spacer(Modifier.height(8.dp))
-                            OutlinedTextField(
-                                value = plusDesplazamiento,
-                                onValueChange = { plusDesplazamiento = it.replace(Regex("[^0-9.,]"), "") },
-                                label = { Text("Plus por desplazamiento (€)") }, modifier = Modifier.fillMaxWidth(),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                        }
-                    }
-                }
-            }
+            AmistosoStep(
+                step = stepState,
+                categoriaId = categoriaIdState,
+                local = localState,
+                visitante = visitanteState,
+                polideportivo = polideportivoState,
+                tarifaManual = tarifaManualState,
+                plusDesplazamiento = plusDesplazamientoState,
+                tieneDesplazamiento = tieneDesplazamientoState,
+                campoAEditar = campoAEditar,
+                partidoAEditar = partidoAEditar,
+                categorias = categorias,
+                onConfirm = onConfirm,
+                onDismiss = onDismiss
+            )
         }
 
         101 -> {
@@ -449,94 +354,22 @@ fun AddPartidoDialog(
             }
         }
 
-        31 -> {
-            val subcats = listOf(
-                "Junior Masculino", "Junior Femenino", "Cadete Masculino", "Cadete Femenino",
-                "Infantil Masculino", "Infantil Femenino", "Mini Masculino", "Mini Femenino"
+        31, 32, 33, 34 -> {
+            SeleccionNavarraSteps(
+                step = stepState,
+                categoriaId = categoriaIdState,
+                numOficiales = numOficialesState,
+                local = localState,
+                visitante = visitanteState,
+                polideportivo = polideportivoState,
+                tarifaManual = tarifaManualState,
+                userRol = userRol,
+                campoAEditar = campoAEditar,
+                partidoAEditar = partidoAEditar,
+                categorias = categorias,
+                onConfirm = onConfirm,
+                onDismiss = onDismiss
             )
-            val listState = rememberLazyListState()
-            BaseStepDialog(title = "Selección Navarra", onDismiss = onDismiss, onBack = { step = 3 }) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    LazyColumn(
-                        state = listState,
-                        contentPadding = PaddingValues(vertical = 16.dp),
-                        modifier = Modifier.fillMaxSize().fadingEdge(listState)
-                    ) {
-                        items(subcats) { sub ->
-                            TextButton(
-                                onClick = {
-                                    categoriaId = "Selección Navarra $sub"
-                                    numOficiales = if (userRol == "Árbitro") 2 else 1
-                                    local = ""
-                                    visitante = ""
-                                    step = 32
-                                },
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                            ) { Text(sub, fontSize = 17.sp, fontWeight = FontWeight.Bold) }
-                            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
-                        }
-                    }
-                }
-            }
-        }
-        32 -> {
-            BaseStepDialog(title = "Polideportivo", onDismiss = onDismiss, onBack = { step = 31 }) {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    TextButton(
-                        onClick = { polideportivo = "Larrabide"; step = 34 },
-                        modifier = Modifier.fillMaxWidth()
-                    ) { Text("Larrabide", fontSize = 18.sp, fontWeight = FontWeight.Bold) }
-                    HorizontalDivider()
-                    TextButton(
-                        onClick = { polideportivo = ""; step = 33 },
-                        modifier = Modifier.fillMaxWidth()
-                    ) { Text("Otros", fontSize = 18.sp, fontWeight = FontWeight.Bold) }
-                }
-            }
-        }
-        33 -> {
-            BaseStepDialog(
-                title = "Escribe el Polideportivo",
-                onDismiss = onDismiss,
-                onBack = { step = 32 },
-                onNext = { step = 34 },
-                nextEnabled = polideportivo.isNotBlank()
-            ) {
-                OutlinedTextField(
-                    value = polideportivo,
-                    onValueChange = { polideportivo = it },
-                    label = { Text("Nombre del pabellón") },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
-                )
-            }
-        }
-        34 -> {
-            BaseStepDialog(
-                title = "Tarifa",
-                onDismiss = onDismiss,
-                onBack = { step = if (polideportivo == "Larrabide") 32 else 33 },
-                onNext = {
-                    if (campoAEditar != null) {
-                        val p = (partidoAEditar ?: Partido()).copy(
-                            tarifaManual = tarifaManual.replace(",", ".").toDoubleOrNull() ?: 0.0
-                        )
-                        onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
-                        onDismiss()
-                    } else step = 8
-                },
-                nextEnabled = tarifaManual.replace(",", ".").toDoubleOrNull() != null,
-                nextText = if (campoAEditar != null) "Guardar" else "Siguiente"
-            ) {
-                OutlinedTextField(
-                    value = tarifaManual,
-                    onValueChange = { tarifaManual = it.replace(Regex("[^0-9.,]"), "") },
-                    label = { Text("Tarifa del partido (€)") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    shape = RoundedCornerShape(12.dp)
-                )
-            }
         }
         4 -> {
             val listState = rememberLazyListState()
