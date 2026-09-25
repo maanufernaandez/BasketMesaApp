@@ -98,7 +98,8 @@ fun AddPartidoDialog(
     }
     var plusDesplazamiento by plusDesplazamientoState
 
-    var invertirLocalia by remember(partidoAEditar) { mutableStateOf(false) }
+    val invertirLocaliaState = remember(partidoAEditar) { mutableStateOf(false) }
+    var invertirLocalia by invertirLocaliaState
 
     // NUEVAS VARIABLES ESTADO PARA AMISTOSOS
     var isAmistoso by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.isAmistoso ?: false) }
@@ -371,150 +372,23 @@ fun AddPartidoDialog(
                 onDismiss = onDismiss
             )
         }
-        4 -> {
-            val listState = rememberLazyListState()
-            val availablePolis = teamsInCategory.flatMap { it.polideportivos }.distinct().sorted()
-            val displayPolis = listOf("Otro") + availablePolis
-            BaseStepDialog(title = "Polideportivo", onDismiss = onDismiss, onBack = { step = 3 }, onNext = null) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    LazyColumn(
-                        state = listState,
-                        contentPadding = PaddingValues(vertical = 16.dp),
-                        modifier = Modifier.fillMaxSize().fadingEdge(listState)
-                    ) {
-                        items(displayPolis) { poli ->
-                            TextButton(
-                                onClick = {
-                                    if (poli == "Otro") {
-                                        polideportivo = ""; step = 45
-                                    } else {
-                                        polideportivo = poli
-                                        if (campoAEditar != null) {
-                                            val p = (partidoAEditar ?: Partido()).copy(
-                                                polideportivo = polideportivo, rol = userRol, autorizado3Vistas = autorizado3Vistas
-                                            )
-                                            onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
-                                            onDismiss()
-                                        } else {
-                                            val localCandidates = teamsInCategory.filter { it.polideportivos.contains(poli) }
-                                            if (localCandidates.size == 1) { local = localCandidates[0].nombre; step = 6 } else step = 5
-                                        }
-                                    }
-                                },
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                            ) { Text(poli, fontSize = 17.sp, fontWeight = FontWeight.Medium) }
-                            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
-                        }
-                    }
-                }
-            }
-        }
-        45 -> {
-            BaseStepDialog(
-                title = "Escribe el Polideportivo",
-                onDismiss = onDismiss,
-                onBack = { step = 4 },
-                onNext = { step = 5 },
-                nextEnabled = polideportivo.isNotBlank()
-            ) {
-                OutlinedTextField(
-                    value = polideportivo,
-                    onValueChange = { polideportivo = it },
-                    label = { Text("Escribe el nombre del polideportivo") },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
-                )
-            }
-        }
-        5 -> {
-            val listState = rememberLazyListState()
-            val availablePolis = teamsInCategory.flatMap { it.polideportivos }.distinct()
-            val localCandidates = if (availablePolis.contains(polideportivo))
-                teamsInCategory.filter { it.polideportivos.contains(polideportivo) }
-            else teamsInCategory
-            val filteredCandidates = localCandidates.filter { it.nombre != "Visitante" }
-            BaseStepDialog(
-                title = "Equipo Local",
-                onDismiss = onDismiss,
-                onBack = { step = if (availablePolis.contains(polideportivo)) 4 else 45 }
-            ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    LazyColumn(
-                        state = listState,
-                        contentPadding = PaddingValues(vertical = 16.dp),
-                        modifier = Modifier.fillMaxSize().fadingEdge(listState)
-                    ) {
-                        items(filteredCandidates) { team ->
-                            TextButton(
-                                onClick = { local = team.nombre; step = 6 },
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                            ) { Text(team.nombre, fontSize = 17.sp) }
-                            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
-                        }
-                    }
-                }
-            }
-        }
-        6 -> {
-            val listState = rememberLazyListState()
-            val availablePolis = teamsInCategory.flatMap { it.polideportivos }.distinct()
-            val visitorCandidates = teamsInCategory.filter { it.nombre != local }
-            BaseStepDialog(
-                title = "Equipo Visitante",
-                onDismiss = onDismiss,
-                onBack = {
-                    val localCandidates = teamsInCategory.filter { it.polideportivos.contains(polideportivo) }
-                    step = if (localCandidates.size == 1 && availablePolis.contains(polideportivo)) 4 else 5
-                }
-            ) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).clickable { invertirLocalia = !invertirLocalia }
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
-                        ) {
-                            Checkbox(checked = invertirLocalia, onCheckedChange = { invertirLocalia = it })
-                            Text(
-                                text = "El equipo visitante actuará como LOCAL",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
-                    Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                        LazyColumn(
-                            state = listState,
-                            contentPadding = PaddingValues(vertical = 8.dp),
-                            modifier = Modifier.fillMaxSize().fadingEdge(listState)
-                        ) {
-                            items(visitorCandidates) { team ->
-                                TextButton(
-                                    onClick = {
-                                        visitante = team.nombre
-                                        if (campoAEditar != null) {
-                                            val finalLocal = if (invertirLocalia) visitante else local
-                                            val finalVisitante = if (invertirLocalia) local else visitante
-                                            val p = (partidoAEditar ?: Partido()).copy(
-                                                equipoLocal = finalLocal, equipoVisitante = finalVisitante,
-                                                rol = userRol, autorizado3Vistas = autorizado3Vistas
-                                            )
-                                            onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
-                                            onDismiss()
-                                        } else step = if (requiresOfficialSelection) 7 else 8
-                                    },
-                                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                                ) { Text(team.nombre, fontSize = 17.sp) }
-                                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
-                            }
-                        }
-                    }
-                }
-            }
+        4, 45, 5, 6 -> {
+            EquipoSteps(
+                step = stepState,
+                polideportivo = polideportivoState,
+                local = localState,
+                visitante = visitanteState,
+                invertirLocalia = invertirLocaliaState,
+                teamsInCategory = teamsInCategory,
+                campoAEditar = campoAEditar,
+                partidoAEditar = partidoAEditar,
+                userRol = userRol,
+                autorizado3Vistas = autorizado3Vistas,
+                categorias = categorias,
+                requiresOfficialSelection = requiresOfficialSelection,
+                onConfirm = onConfirm,
+                onDismiss = onDismiss
+            )
         }
         7 -> {
             val opcionesOficiales = if (userRol == "Árbitro") {
