@@ -22,12 +22,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import com.example.basketmesaapp.utils.DebugLog
 
-/**
- * Centraliza el acceso a Firestore y el estado de la pantalla principal.
- * Sobrevive a las recomposiciones y a los cambios de configuración (por
- * ejemplo, girar la pantalla), a diferencia del estado que vivía antes
- * directamente en el Composable.
- */
 class MainViewModel(
     private val repository: FirestoreRepository = FirestoreRepository()
 ) : ViewModel() {
@@ -38,13 +32,13 @@ class MainViewModel(
     val sanciones: StateFlow<List<Sancion>?> = repository.getSanciones()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
-    val reglasTarifa: StateFlow<List<TarifaReglaRemota>> = repository.getReglasTarifa()
+    private val reglasTarifa: StateFlow<List<TarifaReglaRemota>> = repository.getReglasTarifa()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    val reglasDesplazamiento: StateFlow<List<DesplazamientoRemoto>> = repository.getDesplazamientos()
+    private val reglasDesplazamiento: StateFlow<List<DesplazamientoRemoto>> = repository.getDesplazamientos()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    val reglasDietas: StateFlow<List<DietaRemota>> = repository.getDietas()
+    private val reglasDietas: StateFlow<List<DietaRemota>> = repository.getDietas()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     private val _userRol = MutableStateFlow("Oficial de Mesa")

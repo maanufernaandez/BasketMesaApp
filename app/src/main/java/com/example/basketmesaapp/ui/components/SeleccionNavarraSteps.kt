@@ -31,11 +31,6 @@ import com.example.basketmesaapp.model.Partido
 import com.example.basketmesaapp.utils.TarifaCalculator
 import com.example.basketmesaapp.utils.fadingEdge
 
-/**
- * Pasos 31-34 del wizard de creación de partido: subcategoría, polideportivo
- * y tarifa manual, específicos del flujo de Selección Navarra. Extraído de
- * AddPartidoDialog para mantener ese archivo más pequeño.
- */
 @Composable
 fun SeleccionNavarraSteps(
     step: MutableState<Int>,

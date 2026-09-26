@@ -32,18 +32,16 @@ object HorarioValidator {
 
         return when {
             dayOfWeek == java.util.Calendar.SUNDAY || esFestivo -> {
-                when {
-                    isSenior || isJunior -> mins < 10 * 60 || (mins >= 12 * 60 + 30 && mins < 16 * 60) || mins > 18 * 60
-                    isCadete -> mins < 10 * 60 || mins > 12 * 60 + 30
-                    else -> false
-                }
+                // Si no es senior ni junior, el guard de arriba garantiza que es cadete.
+                if (isSenior || isJunior) mins < 10 * 60 || (mins >= 12 * 60 + 30 && mins < 16 * 60) || mins > 18 * 60
+                else mins < 10 * 60 || mins > 12 * 60 + 30
             }
             dayOfWeek == java.util.Calendar.SATURDAY -> {
                 when {
                     isSenior -> mins < 16 * 60 || mins > 20 * 60 + 30
                     isJunior -> mins < 10 * 60 || (mins >= 13 * 60 && mins < 16 * 60) || mins > 20 * 60 + 30
-                    isCadete -> mins < 9 * 60 || (mins >= 13 * 60 + 20 && mins < 16 * 60) || mins > 20 * 60 + 30
-                    else -> false
+                    // Si no es senior ni junior, el guard de arriba garantiza que es cadete.
+                    else -> mins < 9 * 60 || (mins >= 13 * 60 + 20 && mins < 16 * 60) || mins > 20 * 60 + 30
                 }
             }
             else -> mins < 18 * 60 || mins >= 20 * 60 + 30

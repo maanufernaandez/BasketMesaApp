@@ -9,13 +9,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 private val AppColorScheme = darkColorScheme(
-    primary = Color(0xFFFF8A65),
+    primary = OrangeLight,
     onPrimary = Color(0xFF212121),
-    secondary = Color(0xFF64B5F6),
-    background = Color(0xFF0F172A),
-    surface = Color(0xFF1E293B),
-    surfaceVariant = Color(0xFF334155),
-    onSurface = Color(0xFFF8FAFC)
+    secondary = BlueLight,
+    background = BackgroundDark,
+    surface = SurfaceDark,
+    surfaceVariant = SurfaceVariantDark,
+    onSurface = OnSurfaceLight,
+    error = RedAccent
 )
 
 private val AppShapes = Shapes(
@@ -29,6 +30,7 @@ fun BasketMesaAppTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = AppColorScheme,
         shapes = AppShapes,
+        typography = Typography,
         content = content
     )
 }

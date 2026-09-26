@@ -53,7 +53,7 @@ class FirestoreRepository {
     }
 
     suspend fun guardarPartido(partido: Partido) {
-        val docId = if (partido.id.isBlank()) UUID.randomUUID().toString() else partido.id
+        val docId = partido.id.ifBlank { UUID.randomUUID().toString() }
         partidosCollection.document(docId).set(partido).await()
     }
 
@@ -89,7 +89,7 @@ class FirestoreRepository {
     }
 
     suspend fun guardarSancion(sancion: Sancion) {
-        val docId = if (sancion.id.isBlank()) UUID.randomUUID().toString() else sancion.id
+        val docId = sancion.id.ifBlank { UUID.randomUUID().toString() }
         sancionesCollection.document(docId).set(sancion).await()
     }
 
@@ -116,15 +116,6 @@ class FirestoreRepository {
             }
             awaitClose { listener.remove() }
         }
-    }
-
-    suspend fun guardarReglaTarifa(regla: TarifaReglaRemota) {
-        val docId = if (regla.id.isBlank()) UUID.randomUUID().toString() else regla.id
-        tarifasReglasCollection.document(docId).set(regla).await()
-    }
-
-    suspend fun eliminarReglaTarifa(reglaId: String) {
-        tarifasReglasCollection.document(reglaId).delete().await()
     }
 
     fun getDesplazamientos(): Flow<List<DesplazamientoRemoto>> {

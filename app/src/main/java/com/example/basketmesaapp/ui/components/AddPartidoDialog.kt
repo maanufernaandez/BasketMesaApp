@@ -1,7 +1,6 @@
 package com.example.basketmesaapp.ui.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.runtime.MutableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -79,11 +76,11 @@ fun AddPartidoDialog(
     val categoriaIdState = remember(partidoAEditar) { mutableStateOf(partidoAEditar?.categoriaId ?: "") }
     var categoriaId by categoriaIdState
     val polideportivoState = remember(partidoAEditar) { mutableStateOf(partidoAEditar?.polideportivo ?: "") }
-    var polideportivo by polideportivoState
+    val polideportivo by polideportivoState
     val localState = remember(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoLocal ?: "") }
-    var local by localState
+    val local by localState
     val visitanteState = remember(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoVisitante ?: "") }
-    var visitante by visitanteState
+    val visitante by visitanteState
     val numOficialesState = remember(partidoAEditar) { mutableIntStateOf(partidoAEditar?.numeroOficiales ?: 2) }
     var numOficiales by numOficialesState
     var cobraDieta by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.cobraDieta ?: false) }
@@ -96,10 +93,10 @@ fun AddPartidoDialog(
             else ""
         )
     }
-    var plusDesplazamiento by plusDesplazamientoState
+    val plusDesplazamiento by plusDesplazamientoState
 
     val invertirLocaliaState = remember(partidoAEditar) { mutableStateOf(false) }
-    var invertirLocalia by invertirLocaliaState
+    val invertirLocalia by invertirLocaliaState
 
     // NUEVAS VARIABLES ESTADO PARA AMISTOSOS
     var isAmistoso by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.isAmistoso ?: false) }
@@ -110,7 +107,7 @@ fun AddPartidoDialog(
     val tieneDesplazamientoState = remember(partidoAEditar) {
         mutableStateOf(partidoAEditar != null && partidoAEditar.plusDesplazamiento > 0.0)
     }
-    var tieneDesplazamiento by tieneDesplazamientoState
+    val tieneDesplazamiento by tieneDesplazamientoState
 
     LaunchedEffect(fecha, hora, categoriaId) {
         cobraDieta = HorarioValidator.esFueraDeHorario(categoriaId, fecha, hora)
@@ -197,18 +194,14 @@ fun AddPartidoDialog(
                     if (conflicto != null) {
                         step = 99
                     } else {
-                        if (campoAEditar != null) {
-                            val p = (partidoAEditar ?: Partido()).copy(
-                                hora = hora, rol = userRol, autorizado3Vistas = autorizado3Vistas
-                            )
-                            onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
-                            onDismiss()
-                        } else {
-                            step = 3
-                        }
+                        val p = (partidoAEditar ?: Partido()).copy(
+                            hora = hora, rol = userRol, autorizado3Vistas = autorizado3Vistas
+                        )
+                        onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
+                        onDismiss()
                     }
                 },
-                nextText = if (campoAEditar != null) "Guardar" else "Siguiente"
+                nextText = "Guardar"
             ) {
                 CustomTimePicker(
                     initialHour = parsedHour,

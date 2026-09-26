@@ -70,9 +70,6 @@ fun MainScreen(viewModel: MainViewModel, onLogout: () -> Unit) {
     val partidos by viewModel.partidos.collectAsState()
     val sanciones by viewModel.sanciones.collectAsState()
     val tarifas = DataConstants.listaCategoriasFijas
-    val reglasTarifa by viewModel.reglasTarifa.collectAsState()
-    val reglasDesplazamiento by viewModel.reglasDesplazamiento.collectAsState()
-    val reglasDietas by viewModel.reglasDietas.collectAsState()
     val userRol by viewModel.userRol.collectAsState()
     val autorizado3Vistas by viewModel.autorizado3Vistas.collectAsState()
 
