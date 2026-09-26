@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import android.util.Log
+import com.example.basketmesaapp.utils.DebugLog
 
 /**
  * Centraliza el acceso a Firestore y el estado de la pantalla principal.
@@ -69,19 +69,19 @@ class MainViewModel(
         viewModelScope.launch {
             try {
                 repository.sembrarReglasTarifaSiVacio()
-                Log.d("SiembraTarifas", "sembrarReglasTarifaSiVacio() terminó sin excepción")
+                DebugLog.d("SiembraTarifas", "sembrarReglasTarifaSiVacio() terminó sin excepción")
             } catch (e: Exception) {
-                Log.e("SiembraTarifas", "Fallo al sembrar tarifas, se usará el fallback local", e)
+                DebugLog.e("SiembraTarifas", "Fallo al sembrar tarifas, se usará el fallback local", e)
             }
         }
         viewModelScope.launch {
             try { repository.sembrarDesplazamientosSiVacio() } catch (e: Exception) {
-                Log.e("SiembraTarifas", "Fallo al sembrar desplazamientos", e)
+                DebugLog.e("SiembraTarifas", "Fallo al sembrar desplazamientos", e)
             }
         }
         viewModelScope.launch {
             try { repository.sembrarDietasSiVacio() } catch (e: Exception) {
-                Log.e("SiembraTarifas", "Fallo al sembrar dietas", e)
+                DebugLog.e("SiembraTarifas", "Fallo al sembrar dietas", e)
             }
         }
     }

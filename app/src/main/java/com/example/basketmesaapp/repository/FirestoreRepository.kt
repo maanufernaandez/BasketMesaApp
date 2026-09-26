@@ -1,6 +1,7 @@
 package com.example.basketmesaapp.repository
 
 import android.util.Log
+import com.example.basketmesaapp.utils.DebugLog
 import com.example.basketmesaapp.model.DesplazamientoRemoto
 import com.example.basketmesaapp.model.DietaRemota
 import com.example.basketmesaapp.model.Partido
@@ -188,13 +189,13 @@ class FirestoreRepository {
         val versionDoc = metaCollection.document("tarifas_reglas_version").get().await()
         val versionGuardada = versionDoc.getLong("version") ?: 0L
 
-        Log.d("SiembraTarifas", "Versión guardada en Firestore: $versionGuardada, versión del código: ${TarifaDefinitions.VERSION}")
+        DebugLog.d("SiembraTarifas", "Versión guardada en Firestore: $versionGuardada, versión del código: ${TarifaDefinitions.VERSION}")
 
         if (versionGuardada >= TarifaDefinitions.VERSION) {
-            Log.d("SiembraTarifas", "Ya está al día, no se resiembra")
+            DebugLog.d("SiembraTarifas", "Ya está al día, no se resiembra")
             return
         }
-        Log.d("SiembraTarifas", "Hay una versión nueva: borrando y resembrando")
+        DebugLog.d("SiembraTarifas", "Hay una versión nueva: borrando y resembrando")
 
         // Hay una versión nueva: borra las reglas viejas antes de sembrar las nuevas.
         val actuales = tarifasReglasCollection.get().await()
