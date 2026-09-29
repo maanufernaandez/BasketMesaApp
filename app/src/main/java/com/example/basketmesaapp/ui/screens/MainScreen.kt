@@ -1,7 +1,6 @@
 package com.example.basketmesaapp.ui.screens
 
 import android.widget.Toast
-import com.example.basketmesaapp.viewmodel.MainViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +25,8 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,6 +43,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,30 +58,42 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.basketmesaapp.model.Partido
 import com.example.basketmesaapp.model.Sancion
+import com.example.basketmesaapp.model.datosOrNull
+import com.example.basketmesaapp.model.errorOrNull
 import com.example.basketmesaapp.ui.components.AddPartidoDialog
 import com.example.basketmesaapp.ui.components.AddSancionDialog
 import com.example.basketmesaapp.ui.components.PartidoCard
 import com.example.basketmesaapp.ui.components.SancionCard
+import com.example.basketmesaapp.utils.AgrupacionMensual
 import com.example.basketmesaapp.utils.DataConstants
+import com.example.basketmesaapp.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel, onLogout: () -> Unit) {
     val context = LocalContext.current
 
-    val partidos by viewModel.partidos.collectAsState()
-    val sanciones by viewModel.sanciones.collectAsState()
+    val partidosState by viewModel.partidos.collectAsState()
+    val sancionesState by viewModel.sanciones.collectAsState()
+    val partidos = partidosState.datosOrNull()
+    val sanciones = sancionesState.datosOrNull()
+    val errorCarga = partidosState.errorOrNull() ?: sancionesState.errorOrNull()
     val tarifas = DataConstants.listaCategoriasFijas
     val userRol by viewModel.userRol.collectAsState()
     val autorizado3Vistas by viewModel.autorizado3Vistas.collectAsState()
 
-    var showAddDialog by remember { mutableStateOf(false) }
-    var showSancionDialog by remember { mutableStateOf(false) }
-    var showStats by remember { mutableStateOf(false) }
-    var partidoEnEdicion by remember { mutableStateOf<Partido?>(null) }
-    var campoAEditar by remember { mutableStateOf<String?>(null) }
-    var sancionEnEdicion by remember { mutableStateOf<Sancion?>(null) }
-    var showProfile by remember { mutableStateOf(false) }
+    var showAddDialog by rememberSaveable { mutableStateOf(false) }
+    var showSancionDialog by rememberSaveable { mutableStateOf(false) }
+    var showStats by rememberSaveable { mutableStateOf(false) }
+    var showProfile by rememberSaveable { mutableStateOf(false) }
+    var campoAEditar by rememberSaveable { mutableStateOf<String?>(null) }
+    var partidoEnEdicionId by rememberSaveable { mutableStateOf<String?>(null) }
+    var sancionEnEdicionId by rememberSaveable { mutableStateOf<String?>(null) }
+    val partidoEnEdicion = partidoEnEdicionId?.let { id -> partidos?.firstOrNull { it.id == id } }
+    val sancionEnEdicion = sancionEnEdicionId?.let { id -> sanciones?.firstOrNull { it.id == id } }
+
+    val cerrarDialogoPartido = { showAddDialog = false; partidoEnEdicionId = null; campoAEditar = null }
+    val cerrarDialogoSancion = { showSancionDialog = false; sancionEnEdicionId = null }
 
     val expandedStates = remember { androidx.compose.runtime.mutableStateMapOf<String, Boolean>() }
     val expandedSancionesStates = remember { androidx.compose.runtime.mutableStateMapOf<String, Boolean>() }
@@ -127,8 +141,7 @@ fun MainScreen(viewModel: MainViewModel, onLogout: () -> Unit) {
                             .shadow(6.dp, RoundedCornerShape(16.dp))
                             .clip(RoundedCornerShape(16.dp))
                             .background(Brush.linearGradient(colors = listOf(MaterialTheme.colorScheme.primary, Color(0xFFFFB74D))))
-                            .clickable { partidoEnEdicion = null; showAddDialog = true }
-                            // Padding reducido a 8.dp para hacerlo más bajo
+                            .clickable { partidoEnEdicionId = null; campoAEditar = null; showAddDialog = true }                            // Padding reducido a 8.dp para hacerlo más bajo
                             .padding(vertical = 8.dp, horizontal = 4.dp)
                     ) {
                         // Icono más grande (28.dp)
@@ -153,8 +166,7 @@ fun MainScreen(viewModel: MainViewModel, onLogout: () -> Unit) {
                             .shadow(6.dp, RoundedCornerShape(16.dp))
                             .clip(RoundedCornerShape(16.dp))
                             .background(Brush.linearGradient(colors = listOf(Color(0xFFEF4444), Color(0xFF991B1B))))
-                            .clickable { sancionEnEdicion = null; showSancionDialog = true }
-                            // Padding reducido a 8.dp para hacerlo más bajo
+                            .clickable { sancionEnEdicionId = null; showSancionDialog = true }                            // Padding reducido a 8.dp para hacerlo más bajo
                             .padding(vertical = 8.dp, horizontal = 4.dp)
                     ) {
                         // Icono más grande (28.dp)
@@ -177,10 +189,12 @@ fun MainScreen(viewModel: MainViewModel, onLogout: () -> Unit) {
                     PartidosTab(
                         partidos = partidos,
                         sanciones = sanciones,
+                        errorCarga = errorCarga,
+                        onReintentar = { viewModel.reintentarCarga() },
                         expandedStates = expandedStates,
                         expandedSancionesStates = expandedSancionesStates,
-                        onEdit = { partido, campo -> partidoEnEdicion = partido; campoAEditar = campo; showAddDialog = true },
-                        onEditSancion = { sancion -> sancionEnEdicion = sancion; showSancionDialog = true },
+                        onEdit = { partido, campo -> partidoEnEdicionId = partido.id; campoAEditar = campo; showAddDialog = true },
+                        onEditSancion = { sancion -> sancionEnEdicionId = sancion.id; showSancionDialog = true },
                         onDeletePartido = { id -> viewModel.eliminarPartido(id) },
                         onDeleteSancion = { id -> viewModel.eliminarSancion(id) }
                     )
@@ -197,25 +211,25 @@ fun MainScreen(viewModel: MainViewModel, onLogout: () -> Unit) {
                 )
             }
 
-            if (showAddDialog) {
+            // Si se estaba editando un partido y aún no se ha cargado la lista
+            // (p. ej. tras recrearse la pantalla), se espera antes de abrir el diálogo.
+            if (showAddDialog && (partidoEnEdicionId == null || partidoEnEdicion != null)) {
                 AddPartidoDialog(
                     categorias = tarifas, partidosExistentes = partidos ?: emptyList(), partidoAEditar = partidoEnEdicion, campoAEditar = campoAEditar, userRol = userRol, autorizado3Vistas = autorizado3Vistas,
-                    onDismiss = { showAddDialog = false; partidoEnEdicion = null; campoAEditar = null },
+                    onDismiss = cerrarDialogoPartido,
                     onConfirm = { nuevoPartido ->
-                        showAddDialog = false
-                        partidoEnEdicion = null
+                        cerrarDialogoPartido()
                         viewModel.guardarPartido(nuevoPartido)
                     }
                 )
             }
 
-            if (showSancionDialog) {
+            if (showSancionDialog && (sancionEnEdicionId == null || sancionEnEdicion != null)) {
                 AddSancionDialog(
                     sancionAEditar = sancionEnEdicion,
-                    onDismiss = { showSancionDialog = false; sancionEnEdicion = null },
+                    onDismiss = cerrarDialogoSancion,
                     onConfirm = { nuevaSancion ->
-                        showSancionDialog = false
-                        sancionEnEdicion = null
+                        cerrarDialogoSancion()
                         viewModel.guardarSancion(nuevaSancion)
                     }
                 )
@@ -228,6 +242,8 @@ fun MainScreen(viewModel: MainViewModel, onLogout: () -> Unit) {
 fun PartidosTab(
     partidos: List<Partido>?,
     sanciones: List<Sancion>?,
+    errorCarga: String?,
+    onReintentar: () -> Unit,
     expandedStates: androidx.compose.runtime.snapshots.SnapshotStateMap<String, Boolean>,
     expandedSancionesStates: androidx.compose.runtime.snapshots.SnapshotStateMap<String, Boolean>,
     onEdit: (Partido, String?) -> Unit,
@@ -235,7 +251,17 @@ fun PartidosTab(
     onDeletePartido: (String) -> Unit,
     onDeleteSancion: (String) -> Unit
 ) {
-    if (partidos == null || sanciones == null) {
+    if (errorCarga != null) {
+        Box(modifier = Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Icon(Icons.Default.Warning, contentDescription = null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.error)
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(errorCarga, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface, textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = onReintentar) { Text("Reintentar") }
+            }
+        }
+    } else if (partidos == null || sanciones == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator(color = MaterialTheme.colorScheme.primary) }
     } else if (partidos.isEmpty() && sanciones.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -246,35 +272,15 @@ fun PartidosTab(
             }
         }
     } else {
-        val localeSpanish = java.util.Locale("es", "ES")
-
-        fun getMonthKey(fecha: String): String = if (fecha.length >= 7) fecha.substring(0, 7) else "0000-00"
-        fun getMonthName(key: String): String {
-            return try {
-                val date = java.text.SimpleDateFormat("yyyy-MM", localeSpanish).parse(key)
-                java.text.SimpleDateFormat("MMMM yyyy", localeSpanish).format(date!!).replaceFirstChar { c -> c.uppercase() }
-            } catch (e: Exception) { "Mes Desconocido" }
-        }
-
-        val allKeys = (partidos.map { getMonthKey(it.fecha) } + sanciones.map { getMonthKey(it.fecha) }).distinct().sortedDescending()
+        // Se agrupa una sola vez por cada cambio de datos, no en cada recomposición.
+        val meses = remember(partidos, sanciones) { AgrupacionMensual.agrupar(partidos, sanciones) }
 
         LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp, start = 2.dp, end = 2.dp)) {
-            allKeys.forEach { mesKey ->
-                val mesName = getMonthName(mesKey)
-
-                val partidosMes = partidos.filter { getMonthKey(it.fecha) == mesKey }
-                    .sortedWith(compareByDescending<Partido> { it.fecha }.thenByDescending { it.hora })
-
-                val sancionesMes = sanciones.filter { getMonthKey(it.fecha) == mesKey }
-                    .sortedByDescending { it.fecha }
-
-                val totalPartidos = partidosMes.sumOf { it.totalPartido }
-                val totalSanciones = sancionesMes.sumOf { it.importe }
-                val totalNeto = totalPartidos - totalSanciones
-
+            meses.forEach { mes ->
+                val mesKey = mes.clave
                 val isExpanded = expandedStates[mesKey] ?: true
 
-                item {
+                item(key = "mes_$mesKey") {
                     Surface(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp).clickable { expandedStates[mesKey] = !isExpanded },
                         shape = RoundedCornerShape(50),
@@ -285,16 +291,16 @@ fun PartidosTab(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, contentDescription = "Plegar/Desplegar", tint = MaterialTheme.colorScheme.primary)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text(mesName, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.primary)
+                                Text(mes.nombre, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.primary)
                             }
-                            Text(String.format(java.util.Locale.US, "%.2f €", totalNeto), fontSize = 18.sp, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onSurface)
+                            Text(String.format(java.util.Locale.US, "%.2f €", mes.totalNeto), fontSize = 18.sp, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onSurface)
                         }
                     }
                 }
 
                 if (isExpanded) {
-                    if (sancionesMes.isNotEmpty()) {
-                        item {
+                    if (mes.sanciones.isNotEmpty()) {
+                        item(key = "sanciones_$mesKey") {
                             val isSancionesExp = expandedSancionesStates[mesKey] ?: false
                             Surface(
                                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp).clickable { expandedSancionesStates[mesKey] = !isSancionesExp },
@@ -308,15 +314,19 @@ fun PartidosTab(
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text("Sanciones", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))
                                     }
-                                    Text("-${String.format(java.util.Locale.US, "%.2f", totalSanciones)} €", fontSize = 16.sp, fontWeight = FontWeight.Black, color = Color(0xFFEF4444))
+                                    Text("-${String.format(java.util.Locale.US, "%.2f", mes.totalSanciones)} €", fontSize = 16.sp, fontWeight = FontWeight.Black, color = Color(0xFFEF4444))
                                 }
                             }
                         }
                         if (expandedSancionesStates[mesKey] == true) {
-                            items(sancionesMes) { sancion -> SancionCard(sancion = sancion, onEdit = onEditSancion, onDelete = onDeleteSancion) }
+                            items(mes.sanciones, key = { "sancion_${it.id}" }) { sancion ->
+                                SancionCard(sancion = sancion, onEdit = onEditSancion, onDelete = onDeleteSancion)
+                            }
                         }
                     }
-                    items(partidosMes) { partido -> PartidoCard(partido = partido, onEdit = onEdit, onDelete = onDeletePartido) }
+                    items(mes.partidos, key = { "partido_${it.id}" }) { partido ->
+                        PartidoCard(partido = partido, onEdit = onEdit, onDelete = onDeletePartido)
+                    }
                 }
             }
         }

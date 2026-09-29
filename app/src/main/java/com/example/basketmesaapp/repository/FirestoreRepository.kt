@@ -40,7 +40,8 @@ class FirestoreRepository {
             }
             val listener = partidosCollection.whereEqualTo("userId", uid).addSnapshotListener { snapshot, e ->
                 if (e != null) {
-                    trySend(emptyList())
+                    // Se propaga el error: la UI debe distinguirlo de "no hay partidos".
+                    close(e)
                     return@addSnapshotListener
                 }
                 val partidos = snapshot?.documents?.mapNotNull { doc ->
@@ -76,7 +77,7 @@ class FirestoreRepository {
             }
             val listener = sancionesCollection.whereEqualTo("userId", uid).addSnapshotListener { snapshot, e ->
                 if (e != null) {
-                    trySend(emptyList())
+                    close(e)
                     return@addSnapshotListener
                 }
                 val sanciones = snapshot?.documents?.mapNotNull { doc ->

@@ -21,16 +21,42 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import com.example.basketmesaapp.utils.DebugLog
+import com.example.basketmesaapp.utils.ImportePartido
+import com.example.basketmesaapp.model.DataState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModel(
     private val repository: FirestoreRepository = FirestoreRepository()
 ) : ViewModel() {
 
-    val partidos: StateFlow<List<Partido>?> = repository.getPartidos()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+    /** Al incrementarse, se vuelven a abrir los listeners de partidos y sanciones (botón "Reintentar"). */
+    private val recarga = MutableStateFlow(0)
 
-    val sanciones: StateFlow<List<Sancion>?> = repository.getSanciones()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+    val partidos: StateFlow<DataState<List<Partido>>> = recarga
+        .flatMapLatest { repository.getPartidos().comoDataState("partidos") }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DataState.Loading)
+
+    val sanciones: StateFlow<DataState<List<Sancion>>> = recarga
+        .flatMapLatest { repository.getSanciones().comoDataState("sanciones") }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DataState.Loading)
+
+    fun reintentarCarga() {
+        recarga.value += 1
+    }
+
+    private fun <T> Flow<List<T>>.comoDataState(origen: String): Flow<DataState<List<T>>> =
+        map<List<T>, DataState<List<T>>> { DataState.Success(it) }
+            .onStart { emit(DataState.Loading) }
+            .catch { e ->
+                DebugLog.e("Carga", "Error cargando $origen", e)
+                emit(DataState.Error("No se han podido cargar tus $origen. Comprueba tu conexión e inténtalo de nuevo."))
+            }
 
     private val reglasTarifa: StateFlow<List<TarifaReglaRemota>> = repository.getReglasTarifa()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
@@ -92,16 +118,30 @@ class MainViewModel(
             }
     }
 
+    private fun partidoGuardado(id: String): Partido? {
+        if (id.isBlank()) return null
+        val estado = partidos.value
+        return if (estado is DataState.Success) estado.data.firstOrNull { it.id == id } else null
+    }
+
     fun guardarPartido(partido: Partido) {
         viewModelScope.launch {
             try {
-                val total = TarifaCalculator.calcularTotal(
-                    partido,
-                    DataConstants.listaCategoriasFijas,
-                    reglasTarifa.value,
-                    reglasDesplazamiento.value,
-                    reglasDietas.value
-                )
+                // Si el partido ya existía y no ha cambiado nada que afecte al precio,
+                // se conserva su importe: editar un partido antiguo no debe reaplicar
+                // las tarifas de hoy sobre él.
+                val anterior = partidoGuardado(partido.id)
+                val total = if (anterior != null && !ImportePartido.cambiaElImporte(anterior, partido)) {
+                    anterior.totalPartido
+                } else {
+                    TarifaCalculator.calcularTotal(
+                        partido,
+                        DataConstants.listaCategoriasFijas,
+                        reglasTarifa.value,
+                        reglasDesplazamiento.value,
+                        reglasDietas.value
+                    )
+                }
                 repository.guardarPartido(partido.copy(totalPartido = total))
             } catch (e: Exception) {
                 _errores.emit("Fallo al guardar designación")

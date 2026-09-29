@@ -1,6 +1,7 @@
 package com.example.basketmesaapp.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +30,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -69,24 +69,25 @@ fun AddPartidoDialog(
         else -> if (partidoAEditar?.isAmistoso == true) 100 else 1
     }
 
-    val stepState = remember(partidoAEditar) { mutableIntStateOf(pasoInicial) }
+    // rememberSaveable: si se gira la pantalla a mitad del asistente no se pierde lo introducido.
+    val stepState = rememberSaveable(partidoAEditar) { mutableStateOf(pasoInicial) }
     var step by stepState
-    var fecha by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.fecha ?: "") }
-    var hora by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.hora ?: "16:00") }
-    val categoriaIdState = remember(partidoAEditar) { mutableStateOf(partidoAEditar?.categoriaId ?: "") }
+    var fecha by rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.fecha ?: "") }
+    var hora by rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.hora ?: "16:00") }
+    val categoriaIdState = rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.categoriaId ?: "") }
     var categoriaId by categoriaIdState
-    val polideportivoState = remember(partidoAEditar) { mutableStateOf(partidoAEditar?.polideportivo ?: "") }
+    val polideportivoState = rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.polideportivo ?: "") }
     val polideportivo by polideportivoState
-    val localState = remember(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoLocal ?: "") }
+    val localState = rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoLocal ?: "") }
     val local by localState
-    val visitanteState = remember(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoVisitante ?: "") }
+    val visitanteState = rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoVisitante ?: "") }
     val visitante by visitanteState
-    val numOficialesState = remember(partidoAEditar) { mutableIntStateOf(partidoAEditar?.numeroOficiales ?: 2) }
+    val numOficialesState = rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.numeroOficiales ?: 2) }
     var numOficiales by numOficialesState
-    var cobraDieta by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.cobraDieta ?: false) }
-    var tipoDesplazamiento by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.tipoDesplazamiento ?: "Ninguno") }
+    var cobraDieta by rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.cobraDieta ?: false) }
+    var tipoDesplazamiento by rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.tipoDesplazamiento ?: "Ninguno") }
 
-    val plusDesplazamientoState = remember(partidoAEditar) {
+    val plusDesplazamientoState = rememberSaveable(partidoAEditar) {
         mutableStateOf(
             if (partidoAEditar != null && partidoAEditar.plusDesplazamiento > 0.0)
                 partidoAEditar.plusDesplazamiento.toString()
@@ -95,16 +96,16 @@ fun AddPartidoDialog(
     }
     val plusDesplazamiento by plusDesplazamientoState
 
-    val invertirLocaliaState = remember(partidoAEditar) { mutableStateOf(false) }
+    val invertirLocaliaState = rememberSaveable(partidoAEditar) { mutableStateOf(false) }
     val invertirLocalia by invertirLocaliaState
 
     // NUEVAS VARIABLES ESTADO PARA AMISTOSOS
-    var isAmistoso by remember(partidoAEditar) { mutableStateOf(partidoAEditar?.isAmistoso ?: false) }
-    val tarifaManualState = remember(partidoAEditar) {
+    var isAmistoso by rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.isAmistoso ?: false) }
+    val tarifaManualState = rememberSaveable(partidoAEditar) {
         mutableStateOf(if (partidoAEditar != null && partidoAEditar.tarifaManual > 0.0) partidoAEditar.tarifaManual.toString() else "")
     }
     var tarifaManual by tarifaManualState
-    val tieneDesplazamientoState = remember(partidoAEditar) {
+    val tieneDesplazamientoState = rememberSaveable(partidoAEditar) {
         mutableStateOf(partidoAEditar != null && partidoAEditar.plusDesplazamiento > 0.0)
     }
     val tieneDesplazamiento by tieneDesplazamientoState
@@ -140,6 +141,11 @@ fun AddPartidoDialog(
         }
     }
 
+    // Al editar la fecha o la hora hay que volver a evaluar si el partido queda fuera de
+    // horario (y por tanto cobra dieta). Al crear un partido ya lo hace el LaunchedEffect de arriba.
+    fun dietaTrasCambio(base: Partido, nuevaFecha: String, nuevaHora: String): Boolean =
+        !base.isAmistoso && HorarioValidator.esFueraDeHorario(base.categoriaId, nuevaFecha, nuevaHora)
+
     when (step) {
         1 -> {
             var fechaTemporal by remember { mutableStateOf(fecha) }
@@ -150,8 +156,10 @@ fun AddPartidoDialog(
                 onNext = {
                     fecha = fechaTemporal
                     if (campoAEditar != null) {
-                        val p = (partidoAEditar ?: Partido()).copy(
-                            fecha = fecha, rol = userRol, autorizado3Vistas = autorizado3Vistas
+                        val base = partidoAEditar ?: Partido()
+                        val p = base.copy(
+                            fecha = fecha, rol = userRol, autorizado3Vistas = autorizado3Vistas,
+                            cobraDieta = dietaTrasCambio(base, fecha, hora)
                         )
                         onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
                         onDismiss()
@@ -194,8 +202,10 @@ fun AddPartidoDialog(
                     if (conflicto != null) {
                         step = 99
                     } else {
-                        val p = (partidoAEditar ?: Partido()).copy(
-                            hora = hora, rol = userRol, autorizado3Vistas = autorizado3Vistas
+                        val base = partidoAEditar ?: Partido()
+                        val p = base.copy(
+                            hora = hora, rol = userRol, autorizado3Vistas = autorizado3Vistas,
+                            cobraDieta = dietaTrasCambio(base, fecha, hora)
                         )
                         onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
                         onDismiss()

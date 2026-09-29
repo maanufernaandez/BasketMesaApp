@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.example.basketmesaapp.model.Sancion
 import com.example.basketmesaapp.utils.DataConstants
 import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.runtime.saveable.rememberSaveable
 
 @Composable
 fun AddSancionDialog(
@@ -27,11 +28,11 @@ fun AddSancionDialog(
     onDismiss: () -> Unit,
     onConfirm: (Sancion) -> Unit
 ) {
-    var step by remember(sancionAEditar) { mutableIntStateOf(1) }
+    var step by rememberSaveable(sancionAEditar) { mutableIntStateOf(1) }
 
-    var fecha by remember(sancionAEditar) { mutableStateOf(sancionAEditar?.fecha ?: "") }
-    var motivo by remember(sancionAEditar) { mutableStateOf(sancionAEditar?.motivo ?: "") }
-    var importeStr by remember(sancionAEditar) {
+    var fecha by rememberSaveable(sancionAEditar) { mutableStateOf(sancionAEditar?.fecha ?: "") }
+    var motivo by rememberSaveable(sancionAEditar) { mutableStateOf(sancionAEditar?.motivo ?: "") }
+    var importeStr by rememberSaveable(sancionAEditar) {
         mutableStateOf(
             if (sancionAEditar != null && sancionAEditar.importe > 0.0)
                 sancionAEditar.importe.toString()
