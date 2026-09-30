@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,14 +21,17 @@ import androidx.compose.ui.unit.dp
 import com.example.basketmesaapp.model.Sancion
 import com.example.basketmesaapp.utils.DataConstants
 import com.google.firebase.auth.FirebaseAuth
-import androidx.compose.runtime.saveable.rememberSaveable
 
 @Composable
 fun AddSancionDialog(
     sancionAEditar: Sancion? = null,
+    festivosRemotos: List<String> = emptyList(),
     onDismiss: () -> Unit,
     onConfirm: (Sancion) -> Unit
 ) {
+    val festivosEfectivos = remember(festivosRemotos) {
+        festivosRemotos.ifEmpty { DataConstants.festivosTemporada }
+    }
     var step by rememberSaveable(sancionAEditar) { mutableIntStateOf(1) }
 
     var fecha by rememberSaveable(sancionAEditar) { mutableStateOf(sancionAEditar?.fecha ?: "") }
@@ -53,7 +57,7 @@ fun AddSancionDialog(
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CustomDatePicker(
                         initialDate = fechaTemporal,
-                        festivos = DataConstants.festivosTemporada
+                        festivos = festivosEfectivos
                     ) { nuevaFecha -> fechaTemporal = nuevaFecha }
                 }
             }

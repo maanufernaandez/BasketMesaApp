@@ -81,6 +81,8 @@ fun MainScreen(viewModel: MainViewModel, onLogout: () -> Unit) {
     val tarifas = DataConstants.listaCategoriasFijas
     val userRol by viewModel.userRol.collectAsState()
     val autorizado3Vistas by viewModel.autorizado3Vistas.collectAsState()
+    val equiposRemotos by viewModel.equiposRemotos.collectAsState()
+    val festivosRemotos by viewModel.festivosRemotos.collectAsState()
 
     var showAddDialog by rememberSaveable { mutableStateOf(false) }
     var showSancionDialog by rememberSaveable { mutableStateOf(false) }
@@ -216,6 +218,8 @@ fun MainScreen(viewModel: MainViewModel, onLogout: () -> Unit) {
             if (showAddDialog && (partidoEnEdicionId == null || partidoEnEdicion != null)) {
                 AddPartidoDialog(
                     categorias = tarifas, partidosExistentes = partidos ?: emptyList(), partidoAEditar = partidoEnEdicion, campoAEditar = campoAEditar, userRol = userRol, autorizado3Vistas = autorizado3Vistas,
+                    equiposRemotos = equiposRemotos,
+                    festivosRemotos = festivosRemotos.map { it.fecha },
                     onDismiss = cerrarDialogoPartido,
                     onConfirm = { nuevoPartido ->
                         cerrarDialogoPartido()
@@ -227,6 +231,7 @@ fun MainScreen(viewModel: MainViewModel, onLogout: () -> Unit) {
             if (showSancionDialog && (sancionEnEdicionId == null || sancionEnEdicion != null)) {
                 AddSancionDialog(
                     sancionAEditar = sancionEnEdicion,
+                    festivosRemotos = festivosRemotos.map { it.fecha },
                     onDismiss = cerrarDialogoSancion,
                     onConfirm = { nuevaSancion ->
                         cerrarDialogoSancion()

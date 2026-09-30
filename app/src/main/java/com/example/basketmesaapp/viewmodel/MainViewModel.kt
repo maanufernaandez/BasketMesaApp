@@ -29,6 +29,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import com.example.basketmesaapp.model.EquipoRemoto
+import com.example.basketmesaapp.model.FestivoRemoto
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModel(
@@ -67,6 +69,12 @@ class MainViewModel(
     private val reglasDietas: StateFlow<List<DietaRemota>> = repository.getDietas()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
+    val equiposRemotos: StateFlow<List<EquipoRemoto>> = repository.getEquipos()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    val festivosRemotos: StateFlow<List<FestivoRemoto>> = repository.getFestivos()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
     private val _userRol = MutableStateFlow("Oficial de Mesa")
     val userRol: StateFlow<String> = _userRol.asStateFlow()
 
@@ -102,6 +110,16 @@ class MainViewModel(
         viewModelScope.launch {
             try { repository.sembrarDietasSiVacio() } catch (e: Exception) {
                 DebugLog.e("SiembraTarifas", "Fallo al sembrar dietas", e)
+            }
+        }
+        viewModelScope.launch {
+            try { repository.sembrarEquiposSiVacio() } catch (e: Exception) {
+                DebugLog.e("SiembraTarifas", "Fallo al sembrar equipos", e)
+            }
+        }
+        viewModelScope.launch {
+            try { repository.sembrarFestivosSiVacio() } catch (e: Exception) {
+                DebugLog.e("SiembraTarifas", "Fallo al sembrar festivos", e)
             }
         }
     }

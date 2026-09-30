@@ -212,8 +212,20 @@ fun AuthScreen(onAuthSuccess: () -> Unit) {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Button(
-                        onClick = { auth.sendPasswordResetEmail(email).addOnCompleteListener { if (it.isSuccessful) currentStep = "LOGIN" } },
-                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        onClick = {
+                            if (email.isBlank()) {
+                                Toast.makeText(context, "Introduce tu correo", Toast.LENGTH_SHORT).show()
+                            } else {
+                                auth.sendPasswordResetEmail(email.trim()).addOnCompleteListener {
+                                    if (it.isSuccessful) {
+                                        Toast.makeText(context, "Te hemos enviado un correo para restablecer la contraseña", Toast.LENGTH_LONG).show()
+                                        currentStep = "LOGIN"
+                                    } else {
+                                        Toast.makeText(context, getFirebaseErrorMessage(it.exception), Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            }
+                        },                        modifier = Modifier.fillMaxWidth().height(48.dp),
                         shape = RoundedCornerShape(12.dp)
                     ) { Text("Enviar enlace", fontSize = 16.sp, fontWeight = FontWeight.Bold) }
 

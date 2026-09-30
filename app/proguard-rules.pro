@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Firestore rellena estos modelos por reflexión (constructor vacío y nombres de
+# propiedad). Si se activa isMinifyEnabled, sin esto R8 los renombraría y los
+# datos dejarían de leerse/escribirse correctamente.
+-keepattributes Signature, *Annotation*
+-keepclassmembers class com.example.basketmesaapp.model.** { *; }

@@ -7,7 +7,12 @@ package com.example.basketmesaapp.utils
  */
 object HorarioValidator {
 
-    fun esFueraDeHorario(catId: String, fechaStr: String, horaStr: String): Boolean {
+    fun esFueraDeHorario(
+        catId: String,
+        fechaStr: String,
+        horaStr: String,
+        festivos: List<String> = DataConstants.festivosTemporada
+    ): Boolean {
         if (fechaStr.isEmpty() || horaStr.isEmpty() || !horaStr.contains(":")) return false
         val base = catId.lowercase()
         if (base.contains("seleccion")) return false
@@ -28,7 +33,7 @@ object HorarioValidator {
             time = sdf.parse(fechaStr) ?: return false
         }
         val dayOfWeek = cal.get(java.util.Calendar.DAY_OF_WEEK)
-        val esFestivo = DataConstants.festivosTemporada.contains(fechaStr)
+        val esFestivo = festivos.contains(fechaStr)
 
         return when {
             dayOfWeek == java.util.Calendar.SUNDAY || esFestivo -> {

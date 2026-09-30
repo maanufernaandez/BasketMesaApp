@@ -1,13 +1,15 @@
 package com.example.basketmesaapp.repository
 
 import android.util.Log
-import com.example.basketmesaapp.utils.DebugLog
 import com.example.basketmesaapp.model.DesplazamientoRemoto
 import com.example.basketmesaapp.model.DietaRemota
+import com.example.basketmesaapp.model.EquipoRemoto
+import com.example.basketmesaapp.model.FestivoRemoto
 import com.example.basketmesaapp.model.Partido
 import com.example.basketmesaapp.model.Sancion
 import com.example.basketmesaapp.model.TarifaReglaRemota
 import com.example.basketmesaapp.utils.DataConstants
+import com.example.basketmesaapp.utils.DebugLog
 import com.example.basketmesaapp.utils.TarifaDefinitions
 import com.example.basketmesaapp.utils.toTarifaReglaRemota
 import com.google.firebase.auth.FirebaseAuth
@@ -29,6 +31,8 @@ class FirestoreRepository {
 
     private val desplazamientosCollection = db.collection("desplazamientos_reglas")
     private val dietasCollection = db.collection("dietas_reglas")
+    private val equiposCollection = db.collection("equipos")
+    private val festivosCollection = db.collection("festivos_temporada")
 
     fun getPartidos(): Flow<List<Partido>> {
         val uid = auth.currentUser?.uid ?: ""
@@ -173,6 +177,64 @@ class FirestoreRepository {
             val docId = UUID.randomUUID().toString()
             val regla = DietaRemota(categoria = categoria, importe = importe)
             batch.set(dietasCollection.document(docId), regla)
+        }
+        batch.commit().await()
+    }
+
+    fun getEquipos(): Flow<List<EquipoRemoto>> {
+        return callbackFlow {
+            val listener = equiposCollection.addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    trySend(emptyList())
+                    return@addSnapshotListener
+                }
+                val equipos = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(EquipoRemoto::class.java)?.apply { id = doc.id }
+                } ?: emptyList()
+                trySend(equipos)
+            }
+            awaitClose { listener.remove() }
+        }
+    }
+
+    fun getFestivos(): Flow<List<FestivoRemoto>> {
+        return callbackFlow {
+            val listener = festivosCollection.addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    trySend(emptyList())
+                    return@addSnapshotListener
+                }
+                val festivos = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(FestivoRemoto::class.java)?.apply { id = doc.id }
+                } ?: emptyList()
+                trySend(festivos)
+            }
+            awaitClose { listener.remove() }
+        }
+    }
+
+    suspend fun sembrarEquiposSiVacio() {
+        val snapshot = equiposCollection.limit(1).get().await()
+        if (!snapshot.isEmpty) return
+
+        val batch = db.batch()
+        DataConstants.categoriasData.forEach { (categoria, equipos) ->
+            equipos.forEach { equipo ->
+                val docId = UUID.randomUUID().toString()
+                val regla = EquipoRemoto(categoria = categoria, nombre = equipo.nombre, polideportivos = equipo.polideportivos)
+                batch.set(equiposCollection.document(docId), regla)
+            }
+        }
+        batch.commit().await()
+    }
+
+    suspend fun sembrarFestivosSiVacio() {
+        val snapshot = festivosCollection.limit(1).get().await()
+        if (!snapshot.isEmpty) return
+
+        val batch = db.batch()
+        DataConstants.festivosTemporada.forEach { fecha ->
+            batch.set(festivosCollection.document(fecha), FestivoRemoto(fecha = fecha))
         }
         batch.commit().await()
     }

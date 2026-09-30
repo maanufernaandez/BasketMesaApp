@@ -1,6 +1,8 @@
 package com.example.basketmesaapp.ui.components
 
 import androidx.compose.foundation.clickable
+import com.example.basketmesaapp.model.Equipo
+import com.example.basketmesaapp.model.EquipoRemoto
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,9 +59,14 @@ fun AddPartidoDialog(
     campoAEditar: String? = null,
     userRol: String,
     autorizado3Vistas: Boolean,
+    equiposRemotos: List<EquipoRemoto> = emptyList(),
+    festivosRemotos: List<String> = emptyList(),
     onDismiss: () -> Unit,
     onConfirm: (Partido) -> Unit
 ) {
+    val festivosEfectivos = remember(festivosRemotos) {
+        festivosRemotos.ifEmpty { DataConstants.festivosTemporada }
+    }
     val pasoInicial = when (campoAEditar) {
         "Fecha" -> 1
         "Hora" -> 2
@@ -110,18 +117,30 @@ fun AddPartidoDialog(
     }
     val tieneDesplazamiento by tieneDesplazamientoState
 
-    LaunchedEffect(fecha, hora, categoriaId) {
-        cobraDieta = HorarioValidator.esFueraDeHorario(categoriaId, fecha, hora)
+    LaunchedEffect(fecha, hora, categoriaId, festivosEfectivos) {
+        cobraDieta = HorarioValidator.esFueraDeHorario(categoriaId, fecha, hora, festivosEfectivos)
     }
 
-    val teamsInCategory = remember(categoriaId) {
+    val teamsInCategory = remember(categoriaId, equiposRemotos) {
         val normalizedId = categoriaId.normalizeCategory()
-        DataConstants.categoriasData.entries.find { entry ->
-            val normalizedKey = entry.key.normalizeCategory()
-            normalizedKey == normalizedId ||
-                    normalizedId.contains(normalizedKey) ||
-                    normalizedKey.contains(normalizedId)
-        }?.value ?: emptyList()
+
+        val equiposDeCategoriaRemotos = equiposRemotos
+            .filter { equipo ->
+                val normalizedKey = equipo.categoria.normalizeCategory()
+                normalizedKey == normalizedId || normalizedId.contains(normalizedKey) || normalizedKey.contains(normalizedId)
+            }
+            .map { Equipo(it.nombre, it.polideportivos) }
+
+        if (equiposDeCategoriaRemotos.isNotEmpty()) {
+            equiposDeCategoriaRemotos
+        } else {
+            DataConstants.categoriasData.entries.find { entry ->
+                val normalizedKey = entry.key.normalizeCategory()
+                normalizedKey == normalizedId ||
+                        normalizedId.contains(normalizedKey) ||
+                        normalizedKey.contains(normalizedId)
+            }?.value ?: emptyList()
+        }
     }
 
     val requiresOfficialSelection = remember(categoriaId, userRol) {
@@ -141,10 +160,8 @@ fun AddPartidoDialog(
         }
     }
 
-    // Al editar la fecha o la hora hay que volver a evaluar si el partido queda fuera de
-    // horario (y por tanto cobra dieta). Al crear un partido ya lo hace el LaunchedEffect de arriba.
     fun dietaTrasCambio(base: Partido, nuevaFecha: String, nuevaHora: String): Boolean =
-        !base.isAmistoso && HorarioValidator.esFueraDeHorario(base.categoriaId, nuevaFecha, nuevaHora)
+        !base.isAmistoso && HorarioValidator.esFueraDeHorario(base.categoriaId, nuevaFecha, nuevaHora, festivosEfectivos)
 
     when (step) {
         1 -> {
@@ -171,7 +188,7 @@ fun AddPartidoDialog(
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CustomDatePicker(
                         initialDate = fechaTemporal,
-                        festivos = DataConstants.festivosTemporada
+                        festivos = festivosEfectivos
                     ) { nuevaFecha -> fechaTemporal = nuevaFecha }
                 }
             }
