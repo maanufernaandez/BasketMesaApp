@@ -344,7 +344,6 @@ object DataConstants {
 
     val festivosTemporada = listOf(
         "2026-10-12",
-        "2026-11-01",
         "2026-11-02",
         "2026-12-03",
         "2026-12-06",

@@ -1,0 +1,307 @@
+DESPLAZAMIENTOS:
+Alsasua: 38€ si llevo coche, 9€ si no
+Estella: 32,68€ si llevo coche, 7,74€ si no
+Tudela: 71,44€ si llevo coche, 16,92€ si no
+Puente la reina: 16,72€ si llevo coche, 3,96€ si no
+San Adrián: 61,56€ si llevo coche, 14,58€ si no
+Tafalla: 26,60€ si llevo coche, 6,30€ si no
+Sanguesa: 34,20€ si llevo coche, 8,10€ si no
+Peralta: 44,84€ si llevo coche, 10,62€ si no
+Olite: 25€ si llevo coche, 8€ si no
+Marcilla: 40€ si llevo coche, 10€ si no
+
+
+check LF Challenge: 
+Equipo: Ardoi - Polideportivos: Arrosadía o Municipal (Zizur)
+Equipo: Al-Qázeres Ext
+Equipo: Recoletas Zamora
+Equipo: Domusa Teknik ISB
+Equipo: Unicaja Mijas
+Equipo: Melilla
+Equipo: Bosonit Unibasket
+Equipo: La Laguna Toyota
+Equipo: Fustecma Castelló
+Equipo: Sparking Truth Maristas
+Equipo: Spar Gran Canaria
+Equipo: Lima-Horta Barcelona
+Equipo: Mipelletymas Leon
+Equipo: Cajasol Sevilla
+Equipo: Juventut Badalona
+Equipo: Valencia Basket
+
+check Liga EBA:
+Equipo: Valle de Egüés - Polideportivo: Sarriguren
+Equipo: Megacalzado Ardoi Polideportivo: Municipal (Zizur)
+Equipo: Teknei Bizkaia Zornotza
+Equipo: Cantbasket04
+Equipo: Hotel 4Postes Avila
+Equipo: Ulacia ZKE
+Equipo: Deusto Loiola
+Equipo: Lis Data Solutions Bezana
+Equipo: Piélagos
+Equipo: Baloncesto La Flecha
+Equipo: Los Arcos CB Solares
+Equipo: San Prudencio
+
+check 1ª Division Femenina:
+Equipo: San Ignacio - Polideportivo: San Ignacio
+Equipo: Navarro Villoslada - Polideportivo: Iribarren o Ermitagaña
+Equipo: Aranguren Mutilbasket - Polideportivo: Mutilva (Piscinas)
+Equipo: Tabirako Baque
+Equipo: Gernika KESB
+Equipo: La Salle Versia
+Equipo: Hondarribia Ikasbasket
+Equipo: Ibaeta Basket Easo
+Equipo: Chubby Apps Araba
+Equipo: Graficas Juaristi
+Equipo: Araski
+Equipo: Askartza Claret
+Equipo: Deusto Loiola
+Equipo: Vascons Getxo
+
+
+check 1ª Division Masculina:
+Equipo: Navasket 1DM Polideportivo: Teresianas o Arrosadia
+Equipo: Valle de Egüés Polideportivo: Sarriguren
+Equipo: CB Santurtzi SK
+Equipo: Urgatzi
+Equipo: Leioa SBT
+Equipo: Easo Basket
+Equipo: Disdira Bitxitegia ISB
+Equipo: Vascons Getxo
+Equipo: Spirit Hotels Santutxu
+Equipo: Askartza Claret
+Equipo: Aisla Armeti Ibaizabal
+Equipo: Baskonia
+Equipo: Araberri Basket Club
+Equipo: Mondragon Unibertsitatea
+
+check 2ª Division Femenina:
+Equipo: Gazte Berriak Polideportivo: Idaki (Ansoain)
+Equipo: Lagunak Polideportivo: Municipal (Barañain)
+Equipo: Navasket 2DF Polideportivo: Teresianas
+Equipo: Valle de Egüés Polideportivo: Sarriguren o Maristas o Salesianos o Olaz
+Equipo: Megacalzado Ardoi Polideportivo: Municipal (Zizur)
+Equipo: Liceo Monjardín Polideportivo: Liceo Monjardín
+Equipo: Goierri Aldapa
+Equipo: Atletico San Sebastian
+Equipo: Fisioterapia Unamuno
+Equipo: Spirit Hotels Santutxu
+Equipo: Axa Ortiz de Zarate Amurrio
+Equipo: Alkivent Toju
+Equipo: Zornotza St Bilbao Basket
+Equipo: Ondoan Ointxe
+Equipo: Escolapios Bilbao
+Equipo: Tabirako Baque
+
+2ª Division Masculina: CHECK
+Equipo: Anpri Gazte Berriak Polideportivo: Idaki (Ansoain)
+Equipo: Liceo Monjardín "R" Polideportivo: Liceo Monjardin
+Equipo: Navarro Villoslada A Polideportivo: Ermitagaña o Iribarren
+Equipo: CBASK Polideportivo: Zelandi (Alsasua)
+Equipo: San Ignacio-Nasabi Polideportivo: San Ignacio
+Equipo: C.D Universidad de Navarra Polideportivo: UNAV
+Equipo: Larraona Claret Polideportivo: Larraona
+Equipo: Humiclima Polideportivo: Berriozar
+Equipo: Aranguren Mutilbasket Polideportivo: Irulegui 
+Equipo: CB Noain Polideportivo: Municipal (Noain)
+Equipo: Megacalzado Ardoi Polideportivo: Municipal (Zizur)
+Equipo: San Cernin Polideportivo: San Cernin
+
+Senior Masculina 1ª: CHECK
+Equipo: Txoribeltz Sanduzelai Polideportivo: San Jorge
+Equipo: Muthiko Alaiak Polideportivo: Iribarren
+Equipo: IES Valle del Ebro Polideportivo: IES Valle del Ebro (Tudela)
+Equipo: San Ignacio Polideportivo: San Ignacio
+Equipo: Navasket SM'old Polideportivo: Teresianas
+Equipo: Cendea de Galar Polideportivo: Esquiroz
+Equipo: Valle de Egüés A Polideportivo: Sarriguren o Olaz o Maristas o Salesianos
+Equipo: Mendillorri Egües Polideportivo: Sarriguren o Olaz o Maristas o Salesianos
+Equipo: CB Noain Polideportivo: Municipal (Noain)
+Equipo: Liceo Monjardín "B" Polideportivo: Liceo Monjardin
+Equipo: Payvi Taberna Sanduzelai Polideportivo: San Jorge
+Equipo: Megacalzado Ardoi Polideportivo: Municipal (Zizur)
+Equipo: Berriozar MKE Polideportivo: Berriozar
+Equipo: Lagunak A Polideportivo: Municipal (Barañain) o Lagunak (Piscinas)
+Equipo: CBSA El Navarrico Polideportivo: Alfonso X El Sabio (San Adrián)
+Equipo: Larraona Claret Polideportivo: Larraona
+
+Senior Femenino 1ª: CHECK
+Equipo: Lagunak Polideportivo: Municipal (Barañain) o Lagunak (Piscinas)
+Equipo: Navarro Villoslada A Polideportivo: Ermitagaña o Iribarren
+Equipo: Valle de Egüés A Polideportivo: Sarriguren o Olaz o Maristas o Salesianos
+Equipo: San Ignacio Polideportivo: San Ignacio
+Equipo: CDB Gares Polideportivo: Municipal (Puente la Reina)
+Equipo: Liceo Monjardín Polideportivo: Liceo Monjardín
+Equipo: CB Oncineda SK Polideportivo: Lizarreria (Estella)
+Equipo: CB Noain A Polideportivo: Municipal (Noain)
+Equipo: Cantolagua Polideportivo: Municipal (Sangüesa)
+Equipo: C.D. Universidad de Navarra Polideportivo: UNAV
+Equipo: Payvi Taberna Sanduzelai Polideportivo: San
+Equipo: Navasket SF'Old Polideportivo: Teresianas
+Equipo: Megacalzado Ardoi Polideportivo: Municipal (Zizur) 
+Equipo: Larraona Claret Polideportivo: Larraona
+
+Senior Masculina 2ª: CHECK
+Equipo: San Cernin Polideportivo: San Cernin
+Equipo: Berriozar MKE Polideportivo: Berriozar
+Equipo: Ademar Maristas Polideportivo: Sarriguren o Olaz o Maristas o Salesianos
+Equipo: Oberena Polideportivo: Oberena
+Equipo: Burlada A Polideportivo: Elizgibela
+Equipo: Valle De Egüés B Polideportivo: Sarriguren o Olaz o Maristas o Salesianos o Trinkete
+Equipo: Gazte Berriak Polideportivo: Idaki
+Equipo: CBP Selco Electrónica Polideportivo: Municipal (Peralta)
+Equipo: CB Oncineda SK Polideportivo: Lizarreria (Estella)
+Equipo: Navarro Villoslada B Polideportivo: IES Navarro Villoslada (Frontón)
+Equipo: Navasket SM'New Polideportivo: Rochapea o Teresianas
+Equipo: Zona Media Tafalla Polideportivo: Velodromo (Tafalla)
+Equipo: Burlada B Polideportivo: Elizgibela
+Equipo: Larraona Claret Polideportivo: Larraona
+Equipo: CDB Gares Polideportivo: Municipal (Puente la Reina)
+Equipo: AZK Alde Zaharreko Kluba Polideportivo: Buztintxuri o Rochapea
+Equipo: Lagunak B Polideportivo: Lagunak (Piscinas)
+Equipo: Cantolagua Polideportivo: Municipal (Sangüesa)
+
+Senior Femenino 2ª: CHECK
+Equipo:: Liceo Monjardín "S" Polideportivo: Liceo Monjardín
+Equipo: Mendillorri Egüés Polideportivo: Sarriguren o Olaz o Maristas o Salesianos
+Equipo: Gazte Berriak Polideportivo: Idaki
+Equipo: CD Noain Polideportivo: Municipal (Noain) o AIT Sport Center (Torres de Elorz)
+Equipo: Burlada Polideportivo: Elizgibela
+Equipo: Inregal Ardoi Polideportivo: Municipal (Zizur) o IES Zizur Mayor
+Equipo: Navasket SF'New Polideportivo: Teresianas
+Equipo: Navarro Villoslada B Polideportivo: IES Navarro Villoslada (Frontón) o Ermitagaña o Iribarren
+Equipo: Navarro Villoslada C Polideportivo: IES Navarro Villoslada (Frontón) o Ermitagaña o Iribarren
+Equipo: Aranguren Mutilbasket Polideportivo: Irulegui
+Equipo: Liceo Monjardín 'H' Polideportivo: Liceo Monjardín
+Equipo: Navasket SF'Y78 Polideportivo: Teresianas o Rochapea
+Equipo: Sagrado Corazon Polideportivo: Sagrado Corazon
+Equipo: CBP Inregal Polideportivo: Municipal (Peralta)
+
+
+Junior Masculino 1ª: CHECK
+Equipo: Anaquel IES Valle del Ebro Polideportivo: IES Valle del Ebro (Tudela)
+Equipo: Megacalzado Ardoi Polideportivo: Municipal (Zizur)
+Equipo: Navarro Villoslada A Polideportivo: Ermitagaña o Iribarren
+Equipo: Aranguren Mutilbasket A Polideportivo: Irulegui
+Equipo: Gazte Berriak Polideportivo: Idaki
+Equipo: San Cernin Polideportivo: San Cernin
+Equipo: Valle de Egüés Ibasaga Polideportivo: Sarriguren o Olaz o Maristas o Salesianos
+Equipo: Arenas Polideportivo: SDR Arenas (Tudela)
+Equipo: San Ignacio Liceo Monjardín "A" Polideportivo: Liceo Monjardin
+Equipo: Larraona Claret Polideportivo: Larraona
+
+Junior Femenino 1ª: CHECK
+Equipo: Placafix Navarro Villoslada Polideportivo: Ermitagaña o Iribarren
+Equipo: Navasket JF'old Polideportivo: Teresianas
+Equipo: Megacalzado Ardoi Polideportivo: Municipal (Zizur)
+Equipo: Aranguren Mutilbasket Polideportivo: Irulegui
+Equipo: Gazte Berriak Polideportivo: Idaki
+Equipo: Liceo Monjardín H Polideportivo: Liceo Monjardin
+Equipo: Valle de Egüés Egubain Polideportivo: Sarriguren o Olaz o Maristas o Salesianos
+Equipo: Burlada A Polideportivo: Elizgibela
+
+Junior Masculina 2ª: CHECK
+Equipo: CB Oncineda SK Polideportivo: Lizarreria (Estella)
+Equipo: Navarro Villoslada B Polideportivo: IES Navarro Villoslada (Frontón) o Ermitagaña o Iribarren
+Equipo: Zona Media Tafalla Polideportivo: Velodromo (Tafalla)
+Equipo: Larraona Claret Polideportivo: Larraona
+Equipo: Ademar Apolo Polideportivo: Maristas
+Equipo: Biurdana Navasket JM'old Polideportivo: Rochapea o Teresianas
+Equipo: Lagunak Polideportivo: Municipal (Barañain) o Lagunak (Piscinas)
+Equipo: Cantolagua Polideportivo: Municipal (Sangüesa)
+Equipo: Burlada Polideportivo: Elizgibela
+Equipo: Gazte Berriak Polideportivo: Idaki
+Equipo: Calasanz Mendillorri 09-10 M Polideportivo: Calasanz
+Equipo: Biurdana Navasket JM'new Polideportivo: Rochapea o Teresianas
+Equipo: Inregal Ardoi Polideportivo: Municipal (Zizur) o IES Zizur Mayor
+Equipo: CB Noain Polideportivo: Municipal (Noain) o AIT Sport Center
+Equipo: CBP Inregal Polideportivo: Municipal (Peralta)
+Equipo: Navarro Villoslada C Polideportivo: IES Navarro Villoslada (Frontón) o Ermitagaña o Iribarren
+Equipo: Valle de Egüés Akerregi Polideportivo: Sarriguren o Olaz o Maristas o Salesianos
+
+Junior Femenino 2ª: CHECK
+Equipo: Liceo Monjardín "B" Polideportivo: Liceo Monjardin
+Equipo: Cantolagua Polideportivo: Municipal (Sangüesa)
+Equipo: Navarro Villoslada C Polideportivo: IES Navarro Villoslada (Frontón) o Ermitagaña o Iribarren
+Equipo: Valle de Egües Auzketa Polideportivo: Sarriguren o Olaz o Maristas o Salesianos
+Equipo: CB Noain Polideportivo: Municipal (Noain) o AIT Sport Center
+Equipo: Larraona Claret Polideportivo: Larraona
+Equipo: Navarro Villoslada B Polideportivo: IES Navarro Villoslada (Frontón) o Ermitagaña o Iribarren
+Equipo: Inregal Ardoi Polideportivo: Municipal (Zizur) o IES Zizur Mayor
+Equipo: San Ignacio Polideportivo: San Ignacio
+Equipo: CB Oncineda SK Polideportivo: Lizarreria (Estella)
+Equipo: IES Valle Del Ebro Genesis Polideportivo: IES Valle del Ebro (Tudela)
+Equipo: Calasanz Mendillorri 10 F Polideportivo: Trinkete
+Equipo: Navasket JF'2k10 Polideportivo: Rochapea o Teresianas
+Equipo: Sagrado Corazon Orhi Polideportivo: Sagrado Corazon
+Equipo: Burlada B Polideportivo: Elizgibela
+Equipo: Ademar Nike Polideportivo: Maristas
+Equipo: Gazte Berriak Polideportivo: Idaki
+Equipo: Liceo Monjardín "T" Polideportivo: Liceo Monjardín
+Equipo: Aranguren Mutilbasket B Polideportivo: Irulegui
+Equipo: CB Olite Polideportivo: Nuevo Municipal (Olite)
+Equipo: CDB Gares Polideportivo: Municipal (Puente La Reina)
+
+Cadete Masculino 1ª: CHECK
+Equipo: Megacalzado Ardoi Polideportivo: Municipal (Zizur) o IES Zizur Mayor o Larrabide
+Equipo: Valle de Egües Sarriguren Polideportivo: Sarriguren o Olaz o Maristas o Salesianos o Larrabide
+Equipo: Aranguren Mutilbasket A Polideportivo: Irulegui o Larrabide
+Equipo: Ademar Hermes Polideportivo: Sarriguren o Olaz o Maristas o Salesianos o Larrabide
+Equipo: San Ignacio Polideportivo: San Ignacio o Larrabide
+Equipo: Gazte Berriak Polideportivo: Idaki o Larrabide
+Equipo: IES Valle del Ebro Polideportivo: IES Valle del Ebro (Tudela) o Larrabide
+Equipo: Arenas Polideportivo: SDR Arenas (Tudela) o Larrabide
+Equipo: Liceo Monjardín Polideportivo: Liceo Monjardín o Larrabide
+
+Cadete Femenino 1ª: CHECK
+Equipo: Navarro Villoslada A Polideportivo: Ermitagaña o Iribarren o Larrabide
+Equipo: Navasket CF'old Polideportivo: Teresianas o Larrabide
+Equipo: Gazte Berriak Polideportivo: Idaki o Larrabide
+Equipo: Liceo Monjardín Polideportivo: Liceo Monjardín o Larrabide
+Equipo: Megacalzado Ardoi Polideportivo: Municipal (Zizur) o Larrabide
+Equipo: Valle de Egües Eransus Polideportivo: Sarriguren o Olaz o Maristas o Salesianos o Larrabide
+Equipo: San Cernin "A" Polideportivo: San Cernin o Larrabide
+Equipo: San Ignacio Polideportivo: San Ignacio o Larrabide
+Equipo: Aranguren Mutilbasket A Polideportivo: Irulegui o Larrabide
+Equipo: Aranguren Mutilbasket B Polideportivo: Irulegui o Larrabide
+
+
+Torneo Veteranos:
+Equipo: BKL Veteranos - CBASK Polideportivo: Zelandi (Alsasua)
+Equipo: Valle de Egües Polideportivo: Maristas
+Equipo: Arenas Polideportivo: SDR Arenas (Tudela)
+Equipo: Oberena Polideportivo: Oberena
+Equipo: San Cernin Polideportivo: San Cernin
+Equipo: CB Navasket SK Polideportivo: Teresianas
+Equipo: Larraona Esquiroz Polideportivo: Larraona
+Equipo: Marcilla Basket Polideportivo: Municipal (Marcilla)
+Equipo: CPP Polideportivo: Centro Penitenciario
+
+Torneo Veteranas:
+Equipo: Liceo Monjardín "V" Polideportivo: Liceo Monjardín
+Equipo: Arenas Polideportivo: SDR Arenas (Tudela)
+Equipo: CB Noain Polideportivo: Municipal (Noain) o AIT Sport Center
+Equipo: Zabala Innovation Ardoi Polideportivo: Municipal (Zizur)
+Equipo: La Banda del Patio Polideportivo: SDC Echavacoiz
+Equipo: San Ignacio Polideportivo: San Ignacio
+Equipo: Valle de Egües Polideportivo: Sarriguren o Olaz o Maristas o Salesianos
+Equipo: Cantolagua Veteranas Polideportivo: Municipal (Sangüesa)
+Equipo: Las Chicas del Basket Polideportivo: SDC Echavacoiz
+
+Copa Navarra Femenina: CHECK
+Equipo: Gazte Berriak Polideportivo: Idaki
+Equipo: Aranguren Mutilbasket Polideportivo: Aranguren (Piscinas) o Irulegui
+Equipo: Lagunak Polideportivo: Municipal (Barañain)
+Equipo: Navarro Villoslada Polideportivo: Iribarren o Ermitagaña
+Equipo: Liceo Monjardín Polideportivo: Liceo Monjardín
+Equipo: Megacalzado Ardoi Polideportivo: Municipal (Zizur)
+Equipo: San Ignacio Premo Polideportivo: San Ignacio
+Equipo: Valle de Egües Polideportivo: Sarriguren o Olaz o Maristas o Salesianos
+Equipo: C.B Navasket S.K Polideportivo: Teresianas
+
+Copa Navarra Masculina: CHECK
+Equipo: C.B Navasket S.K Polideportivo: Teresianas
+Equipo: Valle de Egües 1ª DM Polideportivo: Sarriguren o Olaz o Maristas o Salesianos
+Equipo: Valle de Egües 3ª FEB Polideportivo: Sarriguren o Olaz o Maristas o Salesianos
+Equipo: Megacalzado Ardoi Polideportivo: Municipal (Zizur)

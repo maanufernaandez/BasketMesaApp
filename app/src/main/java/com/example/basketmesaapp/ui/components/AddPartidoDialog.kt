@@ -1,5 +1,6 @@
 package com.example.basketmesaapp.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import com.example.basketmesaapp.model.Equipo
 import com.example.basketmesaapp.model.EquipoRemoto
@@ -32,6 +33,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,6 +53,7 @@ import com.example.basketmesaapp.utils.fadingEdge
 import com.example.basketmesaapp.utils.normalizeCategory
 import com.google.firebase.auth.FirebaseAuth
 
+@SuppressLint("AutoboxingStateCreation")
 @Composable
 fun AddPartidoDialog(
     categorias: List<CategoriaConfig>,
@@ -77,7 +80,7 @@ fun AddPartidoDialog(
     }
 
     // rememberSaveable: si se gira la pantalla a mitad del asistente no se pierde lo introducido.
-    val stepState = rememberSaveable(partidoAEditar) { mutableStateOf(pasoInicial) }
+    val stepState = rememberSaveable(partidoAEditar) { mutableIntStateOf(pasoInicial) }
     var step by stepState
     var fecha by rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.fecha ?: "") }
     var hora by rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.hora ?: "16:00") }
@@ -89,7 +92,7 @@ fun AddPartidoDialog(
     val local by localState
     val visitanteState = rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.equipoVisitante ?: "") }
     val visitante by visitanteState
-    val numOficialesState = rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.numeroOficiales ?: 2) }
+    val numOficialesState = rememberSaveable(partidoAEditar) { mutableIntStateOf(partidoAEditar?.numeroOficiales ?: 2) }
     var numOficiales by numOficialesState
     var cobraDieta by rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.cobraDieta ?: false) }
     var tipoDesplazamiento by rememberSaveable(partidoAEditar) { mutableStateOf(partidoAEditar?.tipoDesplazamiento ?: "Ninguno") }
@@ -131,9 +134,7 @@ fun AddPartidoDialog(
             }
             .map { Equipo(it.nombre, it.polideportivos) }
 
-        if (equiposDeCategoriaRemotos.isNotEmpty()) {
-            equiposDeCategoriaRemotos
-        } else {
+        equiposDeCategoriaRemotos.ifEmpty {
             DataConstants.categoriasData.entries.find { entry ->
                 val normalizedKey = entry.key.normalizeCategory()
                 normalizedKey == normalizedId ||
@@ -218,7 +219,7 @@ fun AddPartidoDialog(
                     hora = horaTemporal
                     if (conflicto != null) {
                         step = 99
-                    } else {
+                    } else if (campoAEditar != null) {
                         val base = partidoAEditar ?: Partido()
                         val p = base.copy(
                             hora = hora, rol = userRol, autorizado3Vistas = autorizado3Vistas,
@@ -226,9 +227,11 @@ fun AddPartidoDialog(
                         )
                         onConfirm(p.copy(totalPartido = TarifaCalculator.calcularTotal(p, categorias)))
                         onDismiss()
+                    } else {
+                        step = 3
                     }
                 },
-                nextText = "Guardar"
+                nextText = if (campoAEditar != null) "Guardar" else "Siguiente"
             ) {
                 CustomTimePicker(
                     initialHour = parsedHour,
@@ -420,24 +423,18 @@ fun AddPartidoDialog(
             } else {
                 val catLower = categoriaId.normalizeCategory()
                 when {
-                    catLower.contains("lfchallenge") || catLower.contains("ligaeba") -> listOf(3, 4)
+                    catLower.contains("lfchallenge") -> listOf(3, 4)
+                    catLower.contains("ligaeba") -> listOf(3, 4)
+                    catLower.contains("1ªdivision") -> listOf(2)
+                    catLower.contains("2ªdivisionfemenin") || catLower.contains("2ªdivisionmasculin") -> listOf(2, 1)
+                    catLower.contains("senior") && catLower.contains("1ª") -> listOf(2, 1)
+                    catLower.contains("senior") && catLower.contains("2ª") -> listOf(1, 2)
+                    catLower.contains("junior") && catLower.contains("1ª") -> listOf(2, 1)
+                    catLower.contains("junior") && catLower.contains("2ª") -> listOf(1, 2)
+                    catLower.contains("cadete") -> listOf(1, 2)
+                    catLower.contains("veteran") -> listOf(1)
                     catLower.contains("copanavarra") -> listOf(2, 3)
-                    catLower.contains("cadete") -> listOf(1)
-                    else -> {
-                        val esSegundaFlexible = (catLower.contains("senior") && catLower.contains("2ª")) ||
-                                (catLower.contains("junior") && catLower.contains("2ª"))
-                        if (esSegundaFlexible) {
-                            listOf(1, 2)
-                        } else if (autorizado3Vistas) {
-                            listOf(1, 2)
-                        } else {
-                            val permiteUno = catLower.contains("2ªdivisionfemenin") ||
-                                    catLower.contains("2ªdivisionmasculin") ||
-                                    (catLower.contains("senior") && catLower.contains("1ª")) ||
-                                    (catLower.contains("junior") && catLower.contains("1ª"))
-                            if (permiteUno) listOf(1, 2) else listOf(2)
-                        }
-                    }
+                    else -> listOf(2)
                 }
             }
 
