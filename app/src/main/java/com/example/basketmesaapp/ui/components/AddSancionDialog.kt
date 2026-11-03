@@ -56,8 +56,7 @@ fun AddSancionDialog(
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CustomDatePicker(
-                        initialDate = fechaTemporal,
-                        festivos = festivosEfectivos
+                        initialDate = fechaTemporal
                     ) { nuevaFecha -> fechaTemporal = nuevaFecha }
                 }
             }

@@ -221,11 +221,13 @@ fun CustomTimePicker(initialHour: Int, initialMinute: Int, onTimeSelected: (Stri
                                             val itemCenter = itemInfo.offset + (itemInfo.size / 2f)
                                             val distance = kotlin.math.abs(viewportCenter - itemCenter)
                                             val maxDistance = (layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset) / 2f
-                                            val fraction = 1f - (distance / maxDistance).coerceIn(0f, 1f)
-                                            alpha = 0.15f + 0.85f * fraction
+                                            val fraction = (1f - (distance / maxDistance)).coerceIn(0f, 1f)
+                                            alpha = 0.15f + (0.85f * fraction)
+
                                             val sign = if (itemCenter > viewportCenter) -1f else 1f
                                             rotationX = sign * (distance / maxDistance) * 60f
-                                            val scale = 0.75f + 0.25f * fraction
+                                            val scale = 0.75f + (0.25f * fraction)
+
                                             scaleX = scale
                                             scaleY = scale
                                         } else {
@@ -280,11 +282,13 @@ fun CustomTimePicker(initialHour: Int, initialMinute: Int, onTimeSelected: (Stri
                                             val itemCenter = itemInfo.offset + (itemInfo.size / 2f)
                                             val distance = kotlin.math.abs(viewportCenter - itemCenter)
                                             val maxDistance = (layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset) / 2f
-                                            val fraction = 1f - (distance / maxDistance).coerceIn(0f, 1f)
-                                            alpha = 0.15f + 0.85f * fraction
+                                            val fraction = (1f - (distance / maxDistance)).coerceIn(0f, 1f)
+                                            alpha = 0.15f + (0.85f * fraction)
+
                                             val sign = if (itemCenter > viewportCenter) -1f else 1f
                                             rotationX = sign * (distance / maxDistance) * 60f
-                                            val scale = 0.75f + 0.25f * fraction
+                                            val scale = 0.75f + (0.25f * fraction)
+
                                             scaleX = scale
                                             scaleY = scale
                                         } else {
@@ -308,12 +312,12 @@ fun CustomTimePicker(initialHour: Int, initialMinute: Int, onTimeSelected: (Stri
     }
 }
 
+@SuppressLint("AutoboxingStateCreation")
 @Composable
 fun CustomDatePicker(
     initialDate: String,
     temporadaInicio: String = DataConstants.TEMPORADAINICIO,
     temporadaFin: String = DataConstants.TEMPORADAFIN,
-    festivos: List<String> = DataConstants.festivosTemporada,
     onDateSelected: (String) -> Unit
 ) {
     val localeSpanish = java.util.Locale("es", "ES")
@@ -453,8 +457,8 @@ fun CustomDatePicker(
                                 if (cellDate != null) {
                                     val cellCal = java.util.Calendar.getInstance().apply { time = cellDate }
                                     val isJueves = cellCal.get(java.util.Calendar.DAY_OF_WEEK) == java.util.Calendar.THURSDAY
-                                    val isFestivo = festivos.contains(thisDateStr)
-                                    isSelectable = !cellCal.before(startLimit) && !cellCal.after(endLimit) && !isJueves && !isFestivo
+                                    // Bloquea los jueves pero permite festivos correctamente
+                                    isSelectable = !cellCal.before(startLimit) && !cellCal.after(endLimit) && !isJueves
                                 }
                             }
 
